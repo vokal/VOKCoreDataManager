@@ -56,17 +56,17 @@
     [self sharedInstance];
 }
 
-NSOperationQueue *VI_WritingQueue;
-VOKCoreDataManager *VI_SharedObject;
+static NSOperationQueue *VOK_WritingQueue;
+static VOKCoreDataManager *VOK_SharedObject;
 + (VOKCoreDataManager *)sharedInstance
 {
     static dispatch_once_t pred;
     dispatch_once(&pred,^{
-        VI_SharedObject = [[self alloc] init];
-        VI_WritingQueue = [[NSOperationQueue alloc] init];
-        [VI_WritingQueue setMaxConcurrentOperationCount:1];
+        VOK_SharedObject = [[self alloc] init];
+        VOK_WritingQueue = [[NSOperationQueue alloc] init];
+        [VOK_WritingQueue setMaxConcurrentOperationCount:1];
     });
-    return VI_SharedObject;
+    return VOK_SharedObject;
 }
 
 - (instancetype)init
@@ -144,7 +144,7 @@ VOKCoreDataManager *VI_SharedObject;
     NSAssert([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue], @"Must be on the main queue when initializing persistant store coordinator");
     NSDictionary *options = @{NSMigratePersistentStoresAutomaticallyOption: @(YES),
                               NSInferMappingModelAutomaticallyOption: @(YES)};
-    
+
     NSError *error;
     _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
 
@@ -154,14 +154,33 @@ VOKCoreDataManager *VI_SharedObject;
         storeURL = [[self applicationLibraryDirectory] URLByAppendingPathComponent:self.databaseFilename];
         storeType = NSSQLiteStoreType;
     }
-    
 
     if (![_persistentStoreCoordinator addPersistentStoreWithType:storeType
                                                    configuration:nil
                                                              URL:storeURL
                                                          options:options
                                                            error:&error]) {
-        CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        if (self.migrationFailureOptions == VOKMigrationFailureOptionWipeRecoveryAndAlert) {
+            [[[UIAlertView alloc] initWithTitle:@"Migration Failed"
+                                        message:@"Migration has failed, data will be erased to ensure application stability."
+                                       delegate:nil
+                              cancelButtonTitle:@""
+                              otherButtonTitles:nil] show];
+        }
+
+        if (self.migrationFailureOptions == VOKMigrationFailureOptionWipeRecoveryAndAlert ||
+            self.migrationFailureOptions == VOKMigrationFailureOptionWipeRecovery) {
+            CDLog(@"Full database delete and rebuild");
+            [[NSFileManager defaultManager] removeItemAtPath:storeURL.path error:nil];
+            if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
+                                                           configuration:nil
+                                                                     URL:storeURL
+                                                                 options:nil
+                                                                   error:&error]) {
+                CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
+                abort();
+            }
+        }
     }
 }
 
@@ -442,7 +461,7 @@ VOKCoreDataManager *VI_SharedObject;
 {
     [[VOKCoreDataManager sharedInstance]  managedObjectContext];
     NSAssert(writeBlock, @"Write block must not be nil");
-    [VI_WritingQueue addOperationWithBlock:^{
+    [VOK_WritingQueue addOperationWithBlock:^{
         
         NSManagedObjectContext *tempContext = [[VOKCoreDataManager sharedInstance] temporaryContext];
         writeBlock(tempContext);

@@ -31,6 +31,22 @@
 #import "VOKManagedObject.h"
 #import "VOKFetchedResultsDataSource.h"
 
+typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
+    /**
+     *  No handling of a failed migration, will likely cause app instability and crashing when a migration fails.
+     */
+    VOKMigrationFailureOptionNone,
+    /**
+     *  Silently delete and recreate the sqlite database file, data will be erased, but instability and crashing will be avoided
+     */
+    VOKMigrationFailureOptionWipeRecovery,
+    /**
+     *  Same as VOKMigrationFailureOptionWipeRecoveryAndAlert, but will also notify the user that data has been erased via UIAlertView.
+     */
+    VOKMigrationFailureOptionWipeRecoveryAndAlert,
+};
+
+
 @interface VOKCoreDataManager : NSObject
 
 /**
@@ -59,6 +75,11 @@
  */
 - (void)setResource:(NSString *)resource
            database:(NSString *)database;
+
+/**
+ *  In case of a migration failure, these options allow possible recovery and notification
+ */
+@property VOKMigrationFailureOption migrationFailureOptions;
 
 /**
  Create a new instance of a given NSManagedObject subclass.
