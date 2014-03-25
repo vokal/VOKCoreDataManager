@@ -12,7 +12,7 @@
 - (void)fetchResultsDataSourceHasResults:(BOOL)hasResults;
 @end
 
-@interface VOKFetchResultsDataSource : NSObject <NSFetchedResultsControllerDelegate, UITableViewDelegate, UITableViewDataSource> {
+@interface VOKFetchedResultsDataSource : NSObject <NSFetchedResultsControllerDelegate, UITableViewDelegate, UITableViewDataSource> {
     NSFetchedResultsController *_fetchedResultsController;
 }
 

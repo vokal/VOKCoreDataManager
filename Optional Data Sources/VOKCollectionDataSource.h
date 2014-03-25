@@ -8,7 +8,7 @@
 
 #import "VOKFetchedResultsDataSource.h"
 
-@interface VOKCollectionDataSource : VOKFetchResultsDataSource <UICollectionViewDataSource, UICollectionViewDelegate>
+@interface VOKCollectionDataSource : VOKFetchedResultsDataSource <UICollectionViewDataSource, UICollectionViewDelegate>
 
 @property (strong, readonly) NSFetchedResultsController *fetchedResultsController;
 

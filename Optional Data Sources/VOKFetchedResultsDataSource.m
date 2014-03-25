@@ -6,14 +6,14 @@
 #import "VOKFetchedResultsDataSource.h"
 #import "VOKCoreDataManager.h"
 
-@interface VOKFetchResultsDataSource ()
+@interface VOKFetchedResultsDataSource ()
 
 @property NSString *sectionNameKeyPath;
 @property NSString *cacheName;
 
 @end
 
-@implementation VOKFetchResultsDataSource
+@implementation VOKFetchedResultsDataSource
 
 - (id)initWithPredicate:(NSPredicate *)predicate
               cacheName:(NSString *)cacheName
