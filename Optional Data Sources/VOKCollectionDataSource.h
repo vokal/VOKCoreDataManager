@@ -1,30 +1,29 @@
 //
 //  VICollectionDataSource.h
-//  Changes
+//  MuOptics
 //
 //  Created by teejay on 5/6/13.
 //  Copyright (c) 2013 teejay. All rights reserved.
 //
 
-#import "VIFetchResultsDataSource.h"
-#import "iCarousel.h"
+#import "VOKFetchedResultsDataSource.h"
 
-@interface VICarouselDataSource : VIFetchResultsDataSource <iCarouselDataSource, iCarouselDelegate>
+@interface VOKCollectionDataSource : VOKFetchResultsDataSource <UICollectionViewDataSource, UICollectionViewDelegate>
 
 @property (strong, readonly) NSFetchedResultsController *fetchedResultsController;
 
-@property (weak) iCarousel *carousel;
+@property (weak) UICollectionView *collectionView;
 
 - (id)initWithPredicate:(NSPredicate *)predicate
               cacheName:(NSString *)cacheName
-               carousel:(iCarousel *)carousel
+         collectionView:(UICollectionView *)collectionView
      sectionNameKeyPath:(NSString *)sectionNameKeyPath
         sortDescriptors:(NSArray *)sortDescriptors
      managedObjectClass:(Class)managedObjectClass;
 
 - (id)initWithPredicate:(NSPredicate *)predicate
               cacheName:(NSString *)cacheName
-               carousel:(iCarousel *)carousel
+         collectionView:(UICollectionView *)collectionView
      sectionNameKeyPath:(NSString *)sectionNameKeyPath
         sortDescriptors:(NSArray *)sortDescriptors
      managedObjectClass:(Class)managedObjectClass
@@ -32,19 +31,19 @@
 
 - (id)initWithPredicate:(NSPredicate *)predicate
               cacheName:(NSString *)cacheName
-               carousel:(iCarousel *)carousel
+         collectionView:(UICollectionView *)collectionView
      sectionNameKeyPath:(NSString *)sectionNameKeyPath
         sortDescriptors:(NSArray *)sortDescriptors
      managedObjectClass:(Class)managedObjectClass
-               delegate:(id <VIFetchResultsDataSourceDelegate>)delegate;
+               delegate:(id <VOKFetchedResultsDataSourceDelegate>)delegate;
 
 - (id)initWithPredicate:(NSPredicate *)predicate
               cacheName:(NSString *)cacheName
-               carousel:(iCarousel *)carousel
+         collectionView:(UICollectionView *)collectionView
      sectionNameKeyPath:(NSString *)sectionNameKeyPath
         sortDescriptors:(NSArray *)sortDescriptors
      managedObjectClass:(Class)managedObjectClass
               batchSize:(NSInteger)batchSize
-               delegate:(id <VIFetchResultsDataSourceDelegate>)delegate;
+               delegate:(id <VOKFetchedResultsDataSourceDelegate>)delegate;
 
 @end

@@ -6,19 +6,18 @@
 //  Copyright (c) 2013 teejay. All rights reserved.
 //
 
-#import "VICollectionDataSource.h"
+#import "VOKCollectionDataSource.h"
 
-#import "VICoreDataManager.h"
+#import "VOKCoreDataManager.h"
 
-@interface VICollectionDataSource ()
-{
+@interface VOKCollectionDataSource () {
     NSMutableArray *_objectChanges;
     NSMutableArray *_sectionChanges;
 }
 
 @end
 
-@implementation VICollectionDataSource
+@implementation VOKCollectionDataSource
 
 - (id)initWithPredicate:(NSPredicate *)predicate
               cacheName:(NSString *)cacheName
@@ -27,7 +26,7 @@
         sortDescriptors:(NSArray *)sortDescriptors
      managedObjectClass:(Class)managedObjectClass
               batchSize:(NSInteger)batchSize
-               delegate:(id <VIFetchResultsDataSourceDelegate>)delegate
+               delegate:(id <VOKFetchedResultsDataSourceDelegate>)delegate
 {
     self.collectionView = collectionView;
     self.collectionView.delegate = self;
@@ -50,7 +49,7 @@
      sectionNameKeyPath:(NSString *)sectionNameKeyPath
         sortDescriptors:(NSArray *)sortDescriptors
      managedObjectClass:(Class)managedObjectClass
-               delegate:(id <VIFetchResultsDataSourceDelegate>)delegate
+               delegate:(id <VOKFetchedResultsDataSourceDelegate>)delegate
 {
     return [self initWithPredicate:predicate
                          cacheName:cacheName
