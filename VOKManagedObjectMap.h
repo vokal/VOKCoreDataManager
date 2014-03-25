@@ -1,33 +1,26 @@
 //
 //  VOKManagedObjectMap.h
-//  CoreData
+//  VOKCoreData
 //
 
 #import <Foundation/Foundation.h>
 
 @interface VOKManagedObjectMap : NSObject
 
+/// Remote key for input/output
 @property NSString *inputKeyPath;
+
+/// Local key for input/output
 @property NSString *coreDataKey;
+
+/// Date formatter for input/output
 @property (nonatomic) NSDateFormatter *dateFormatter;
+
+/// Number formatter for input/output
 @property (nonatomic) NSNumberFormatter *numberFormatter;
 
 /**
- Provides easy access to rfc3339 date formatter, like "1985-04-12T23:20:50.52Z"
- @return
- A static instance of NSDateFormatter.
- */
-+ (NSDateFormatter *)defaultDateFormatter;
-
-/**
- Provides easy access to NSNumberFormatterDecimalStyle.
- @return
- A static instance of NSNumberFormatterDecimalStyle
- */
-+ (NSNumberFormatter *)defaultNumberFormatter;
-
-/**
- Creates a map.
+ Creates a map with the default date mapper.
  @param inputKeyPath
  The foreign key to match with the local key.
  @param coreDataKey

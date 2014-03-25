@@ -1,6 +1,6 @@
 //
 //  VOKCoreDataManager.h
-//  CoreData
+//  VOKCoreData
 //
 
 #ifndef __IPHONE_5_0
@@ -8,20 +8,19 @@
 #endif
 
 #ifndef CDLog
-#ifdef DEBUG
-#   define CDLog(...) NSLog(@"%s\n%@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__])
-#else
-#   define CDLog(...) /* */
+#   ifdef DEBUG
+#       define CDLog(...) NSLog(@"%s\n%@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__])
+#   else
+#       define CDLog(...) /* */
+#   endif
 #endif
-#endif
-
 
 #ifndef CDSELECTOR
-#ifdef DEBUG
-#define CDSELECTOR(x) NSStringFromSelector(@selector(x))
-#else
-#define CDSELECTOR(x) @#x //in release builds @#x becomes @"{x}"
-#endif
+#   ifdef DEBUG
+#       define CDSELECTOR(x) NSStringFromSelector(@selector(x))
+#   else
+#       define CDSELECTOR(x) @#x //in release builds @#x becomes @"{x}"
+#   endif
 #endif
 
 #import <Foundation/Foundation.h>
@@ -32,17 +31,11 @@
 #import "VOKFetchedResultsDataSource.h"
 
 typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
-    /**
-     *  No handling of a failed migration, will likely cause app instability and crashing when a migration fails.
-     */
+    /// No handling of a failed migration, will likely cause app instability and crashing when a migration fails.
     VOKMigrationFailureOptionNone,
-    /**
-     *  Silently delete and recreate the sqlite database file, data will be erased, but instability and crashing will be avoided
-     */
+    /// Silently delete and recreate the sqlite database file, data will be erased, but instability and crashing will be avoided
     VOKMigrationFailureOptionWipeRecovery,
-    /**
-     *  Same as VOKMigrationFailureOptionWipeRecoveryAndAlert, but will also notify the user that data has been erased via UIAlertView.
-     */
+    /// Same as VOKMigrationFailureOptionWipeRecoveryAndAlert, but will also notify the user that data has been erased via UIAlertView.
     VOKMigrationFailureOptionWipeRecoveryAndAlert,
 };
 
@@ -273,10 +266,9 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
 - (NSManagedObjectContext *)temporaryContext;
 
 /**
- *  This provides a way for an application with heavy amounts of Core Data threading and writing to maintain object graph integrety by assuring that only one context is being written to at once.
- *
- *  @param writeBlock Do not use GCD or thread jumping inside this block. Handle all fetches, creates and writes using the tempContext variable passed to this block. Do not save or merge this context, it will be done for you.
- *  @param completion This will be fired on the main thread once the context has been saved.
+ This provides a way for an application with heavy amounts of Core Data threading and writing to maintain object graph integrety by assuring that only one context is being written to at once.
+ @param writeBlock Do not use GCD or thread jumping inside this block. Handle all fetches, creates and writes using the tempContext variable passed to this block. Do not save or merge this context, it will be done for you.
+ @param completion This will be fired on the main thread once the context has been saved.
  */
 + (void)writeToTemporaryContext:(void (^)(NSManagedObjectContext *tempContext))writeBlock
                      completion:(void (^)(void))completion;

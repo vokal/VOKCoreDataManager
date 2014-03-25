@@ -1,6 +1,6 @@
 //
 //  VOKManagedObjectMap.h
-//  CoreData
+//  VOKCoreData
 //
 
 #import <Foundation/Foundation.h>

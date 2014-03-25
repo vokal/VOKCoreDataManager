@@ -1,15 +1,20 @@
 //
 //  VOKManagedObjectMap.m
-//  CoreData
+//  VOKCoreData
 //
 
 #import "VOKManagedObjectMapper.h"
 #import "VOKCoreDataManager.h"
 
+@interface VOKManagedObjectMap (VOKdefaultFormatters)
++ (NSDateFormatter *)vok_defaultDateFormatter;
++ (NSNumberFormatter *)vok_defaultNumberFormatter;
+@end
+
 @interface VOKManagedObjectDefaultMapper : VOKManagedObjectMapper
 @end
 
-@interface VOKManagedObjectMapper()
+@interface VOKManagedObjectMapper ()
 @property (nonatomic) NSArray *mapsArray;
 - (void)updateForeignComparisonKey;
 - (id)checkNull:(id)inputObject;
@@ -71,6 +76,7 @@
 }
 
 #pragma mark - Description
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p>\nMaps:%@\nUniqueKey:%@",
@@ -96,8 +102,9 @@
         return inputObject;
     }
 
+    //TODO: fix this bug
     //Bug: using DEFAULT mapper, if the input string COULD be made a number it WILL be made a number.
-    //Be wary of the default mapper
+    //Be wary of the default mapper when dealing with numbers
     id number = [numberFormatter numberFromString:inputObject];
     return number ? number : inputObject;
 }
@@ -153,7 +160,9 @@
 @end
 
 #pragma mark - Dictionary Input and Output
+
 @implementation VOKManagedObjectMapper (dictionaryInputOutput)
+
 - (void)setInformationFromDictionary:(NSDictionary *)inputDict forManagedObject:(NSManagedObject *)object
 {
     [self.mapsArray enumerateObjectsUsingBlock:^(VOKManagedObjectMap *aMap, NSUInteger idx, BOOL *stop) {
@@ -215,14 +224,16 @@ NSString *const period = @".";
 @end
 
 #pragma mark - Dictionary Input and Output with the Default Mapper
+
 @implementation VOKManagedObjectDefaultMapper
+
 - (void)setInformationFromDictionary:(NSDictionary *)inputDict forManagedObject:(NSManagedObject *)object
 {
     //this default mapper assumes that local keys and entities match foreign keys and entities
     [inputDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         id inputObject = obj;
-        inputObject = [self checkDate:inputObject withDateFormatter:[VOKManagedObjectMap defaultDateFormatter]];
-        inputObject = [self checkNumber:inputObject withNumberFormatter:[VOKManagedObjectMap defaultNumberFormatter]];
+        inputObject = [self checkDate:inputObject withDateFormatter:[VOKManagedObjectMap vok_defaultDateFormatter]];
+        inputObject = [self checkNumber:inputObject withNumberFormatter:[VOKManagedObjectMap vok_defaultNumberFormatter]];
         inputObject = [self checkClass:inputObject managedObject:object key:key];
         inputObject = [self checkNull:inputObject];
         [object safeSetValue:inputObject forKey:key];
@@ -235,7 +246,7 @@ NSString *const period = @".";
     NSMutableDictionary *outputDict = [NSMutableDictionary new];
     [attributes enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         id outputObject = [object valueForKey:key];
-        outputObject = [self checkString:outputObject withDateFormatter:[VOKManagedObjectMap defaultDateFormatter]];
+        outputObject = [self checkString:outputObject withDateFormatter:[VOKManagedObjectMap vok_defaultDateFormatter]];
         if (outputObject) {
             outputDict[key] = outputObject;
         }
@@ -246,7 +257,7 @@ NSString *const period = @".";
 
 - (NSDictionary *)hierarchicalDictionaryRepresentationOfManagedObject:(NSManagedObject *)object
 {
-    //the default mapper does not have key paths
+    //the default mapper does not support key paths
     return [self dictionaryRepresentationOfManagedObject:object];
 }
 

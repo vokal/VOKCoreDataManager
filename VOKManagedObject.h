@@ -1,6 +1,6 @@
 //
 //  VOKManagedObject.h
-//  CoreData
+//  VOKCoreData
 //
 
 #import <CoreData/CoreData.h>
@@ -74,14 +74,53 @@
  **/
 + (instancetype)addWithDictionary:(NSDictionary *)inputDict forManagedObjectContext:(NSManagedObjectContext*)contextOrNil;
 
-//These will adhere to the NSManagedObjectContext of the managedObject.
-+ (BOOL)existsForPredicate:(NSPredicate *)predicate forManagedObject:(NSManagedObject *)object;
-+ (NSArray *)fetchAllForPredicate:(NSPredicate *)predicate forManagedObject:(NSManagedObject *)object;
-+ (id)fetchForPredicate:(NSPredicate *)predicate forManagedObject:(NSManagedObject *)object;
+/*
+ Convenience method to create a fetch request.
+ @return
+ A fetch request of the current class.
+ */
++ (NSFetchRequest *)fetchRequest;
 
-//These allow for more flexibility.
+/*
+ Convenience method to create a fetch request with a predicate.
+ @param predicate
+ Predicate to construct the fetch request.
+ @return
+ A fetch request on the given class.
+ */
++ (NSFetchRequest *)fetchRequestWithPredicate:(NSPredicate *)predicate;
+
+/*
+ Checks the count to determine if entities exist matching the predicate.
+ @param predicate
+ Predicate to use to fetch.
+ @param contextOrNil
+ The managed object context to fetch in.  If nil, the main context will be used.
+ @return
+ YES the object exists or NO it does not.
+ */
 + (BOOL)existsForPredicate:(NSPredicate *)predicate forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
+
+/*
+ Returns all entites matching the predicate.
+ @param predicate
+ Predicate to use to fetch.
+ @param contextOrNil
+ The managed object context to fetch in.  If nil, the main context will be used.
+ @return
+ NSArray full of the instances of the current class.
+ */
 + (NSArray *)fetchAllForPredicate:(NSPredicate *)predicate forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
-+ (id)fetchForPredicate:(NSPredicate *)predicate forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
+
+/*
+ Returns one entite matching the predicate. Asserts the count is exactly 1. If more objects are returned this method will let you know.
+ @param predicate
+ Predicate to use to fetch.
+ @param contextOrNil
+ The managed object context to fetch in.  If nil, the main context will be used.
+ @return
+ An instance of the current class.
+ */
++ (instancetype)fetchForPredicate:(NSPredicate *)predicate forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
 
 @end

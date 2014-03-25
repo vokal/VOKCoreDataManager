@@ -1,6 +1,6 @@
 //
 //  VOKCoreDataManager.m
-//  CoreData
+//  VOKCoreData
 //
 
 #import "VOKCoreDataManager.h"
@@ -85,6 +85,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Getters
+
 - (NSManagedObjectContext *)tempManagedObjectContext
 {
     NSManagedObjectContext *tempManagedObjectContext;

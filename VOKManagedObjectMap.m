@@ -1,6 +1,6 @@
 //
 //  VOKManagedObjectMap.m
-//  CoreData
+//  VOKCoreData
 //
 
 #import "VOKManagedObjectMap.h"
@@ -10,7 +10,7 @@
 
 + (instancetype)mapWithForeignKeyPath:(NSString *)inputKeyPath coreDataKey:(NSString *)coreDataKey
 {
-    return [self mapWithForeignKeyPath:inputKeyPath coreDataKey:coreDataKey dateFormatter:[self defaultDateFormatter]];
+    return [self mapWithForeignKeyPath:inputKeyPath coreDataKey:coreDataKey dateFormatter:[self vok_defaultDateFormatter]];
 }
 
 + (instancetype)mapWithForeignKeyPath:(NSString *)inputKeyPath
@@ -18,9 +18,9 @@
                         dateFormatter:(NSDateFormatter *)dateFormatter
 {
     VOKManagedObjectMap *map = [[self alloc] init];
-    [map setInputKeyPath:inputKeyPath];
-    [map setCoreDataKey:coreDataKey];
-    [map setDateFormatter:dateFormatter];
+    map.inputKeyPath = inputKeyPath;
+    map.coreDataKey = coreDataKey;
+    map.dateFormatter = dateFormatter;
     return map;
 }
 
@@ -29,9 +29,9 @@
                       numberFormatter:(NSNumberFormatter *)numberFormatter
 {
     VOKManagedObjectMap *map = [[self alloc] init];
-    [map setInputKeyPath:inputKeyPath];
-    [map setCoreDataKey:coreDataKey];
-    [map setNumberFormatter:numberFormatter];
+    map.inputKeyPath = inputKeyPath;
+    map.coreDataKey = coreDataKey;
+    map.numberFormatter = numberFormatter;
     return map;
 }
 
@@ -47,7 +47,7 @@
     return [mapArray copy];
 }
 
-+ (NSDateFormatter *)defaultDateFormatter
++ (NSDateFormatter *)vok_defaultDateFormatter
 {
     static dispatch_once_t pred = 0;
     static NSDateFormatter *DefaultDateFormatter;
@@ -60,7 +60,7 @@
     return DefaultDateFormatter;
 }
 
-+ (NSNumberFormatter *)defaultNumberFormatter
++ (NSNumberFormatter *)vok_defaultNumberFormatter
 {
     static dispatch_once_t pred = 0;
     static NSNumberFormatter *DefaultNumberFormatter;
