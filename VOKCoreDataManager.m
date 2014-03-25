@@ -94,6 +94,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 
     if (coordinator) {
         tempManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSConfinementConcurrencyType];
+        [tempManagedObjectContext setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
         [tempManagedObjectContext setPersistentStoreCoordinator:coordinator];
     } else {
         CDLog(@"Coordinator is nil & context is %@", [tempManagedObjectContext description]);
@@ -190,12 +191,11 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSAssert([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue], @"Must be on the main queue when initializing main context");
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
 
+    NSAssert(coordinator, @"PersistentStoreCoordinator does not exist. This is a big problem.");
     if (coordinator) {
-        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSConfinementConcurrencyType];
-
+        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [_managedObjectContext setPersistentStoreCoordinator:coordinator];
-        id mergePolicy = [[NSMergePolicy alloc] initWithMergeType:NSMergeByPropertyObjectTrumpMergePolicyType];
-        [_managedObjectContext setMergePolicy:mergePolicy];
+        [_managedObjectContext setMergePolicy:NSMergeByPropertyStoreTrumpMergePolicy];
     }
 }
 
@@ -441,7 +441,6 @@ static VOKCoreDataManager *VOK_SharedObject;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         [[self managedObjectContext] mergeChangesFromContextDidSaveNotification:notification];
-        [[self managedObjectContext] processPendingChanges];
     });
 }
 
