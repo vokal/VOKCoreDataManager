@@ -1,5 +1,5 @@
 //
-//  VICoreDataManager.m
+//  VOKCoreDataManager.m
 //  CoreData
 //
 

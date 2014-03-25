@@ -1,10 +1,10 @@
 //
-//  VICoreDataManager.h
+//  VOKCoreDataManager.h
 //  CoreData
 //
 
 #ifndef __IPHONE_5_0
-#warning "VICoreDataManager uses features only available in iOS SDK 5.0 and later."
+#warning "VOKCoreDataManager uses features only available in iOS SDK 5.0 and later."
 #endif
 
 #ifndef CDLog
@@ -34,10 +34,10 @@
 @interface VOKCoreDataManager : NSObject
 
 /**
- Returns the singleton core data manager. VICoreDataManager is not expected to be subclassed.
+ Returns the singleton core data manager. VOKCoreDataManager is not expected to be subclassed.
  On launch you should also set the resource and database names. Example:
  @code
- [[VICoreDataManager sharedInstance] setResource:@"VICoreDataModel" database:@"VICoreDataModel.sqlite"];
+ [[VOKCoreDataManager sharedInstance] setResource:@"VICoreDataModel" database:@"VICoreDataModel.sqlite"];
  @endcode
  @return The shared core data manager.
  */
@@ -242,9 +242,9 @@
  Create the context and do work on the same queue. You are responsible for retaining temporary contexts yourself.
  Here is an example background import:
  @code
- NSManagedObjectContext *backgroundContext = [[VICoreDataManager sharedInstance] temporaryContext];
+ NSManagedObjectContext *backgroundContext = [[VOKCoreDataManager sharedInstance] temporaryContext];
  [self loadDataWithContext:backgroundContext]; //do some data loading
- [[VICoreDataManager sharedInstance] saveAndMergeWithMainContext:backgroundContext];
+ [[VOKCoreDataManager sharedInstance] saveAndMergeWithMainContext:backgroundContext];
  @endcode
  @return
  A managed object context with the same persistant store coordinator as tha main context, but otherwise no relationship.
