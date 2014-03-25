@@ -15,6 +15,15 @@
 #endif
 #endif
 
+
+#ifndef CDSELECTOR
+#ifdef DEBUG
+#define CDSELECTOR(x) NSStringFromSelector(@selector(x))
+#else
+#define CDSELECTOR(x) @#x //in release builds @#x becomes @"{x}"
+#endif
+#endif
+
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
