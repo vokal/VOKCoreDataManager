@@ -15,7 +15,6 @@
 #endif
 #endif
 
-
 #ifndef CDSELECTOR
 #ifdef DEBUG
 #define CDSELECTOR(x) NSStringFromSelector(@selector(x))
@@ -24,12 +23,13 @@
 #endif
 #endif
 
+#define MAP_FOREIGN_TO_LOCAL(x, y) [VOKManagedObjectMap mapWithForeignKeyPath:x coreDataKey:CDSELECTOR(y)]
+
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
 #import "VOKManagedObjectMapper.h"
 #import "VOKManagedObject.h"
-#import "VOKFetchedResultsDataSource.h"
 
 typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
     /**
