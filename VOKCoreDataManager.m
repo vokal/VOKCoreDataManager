@@ -254,11 +254,11 @@ static VOKCoreDataManager *VOK_SharedObject;
             NSAssert(matchingObjectsCount < 2, @"UNIQUE IDENTIFIER IS NOT UNIQUE. MORE THAN ONE MATCHING OBJECT FOUND");
             returnObject = matchingObjects[0];
             if (mapper.overwriteObjectsWithServerChanges) {
-                [self setInformationFromDictionary:inputDict forManagedObject:returnObject];
+                [mapper setInformationFromDictionary:inputDict forManagedObject:returnObject];
             }
         } else {
             returnObject = [self managedObjectOfClass:objectClass inContext:contextOrNil];
-            [self setInformationFromDictionary:inputDict forManagedObject:returnObject];
+            [mapper setInformationFromDictionary:inputDict forManagedObject:returnObject];
         }
         [returnArray addObject:returnObject];
     }];
