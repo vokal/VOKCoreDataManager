@@ -60,17 +60,6 @@
     return DefaultDateFormatter;
 }
 
-+ (NSNumberFormatter *)vok_defaultNumberFormatter
-{
-    static dispatch_once_t pred = 0;
-    static NSNumberFormatter *DefaultNumberFormatter;
-    dispatch_once(&pred, ^{
-        DefaultNumberFormatter = [NSNumberFormatter new];
-        [DefaultNumberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    });
-    return DefaultNumberFormatter;
-}
-
 #pragma mark - Description
 - (NSString *)description
 {

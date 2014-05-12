@@ -45,7 +45,9 @@
                           coreDataKey:(NSString *)coreDataKey
                         dateFormatter:(NSDateFormatter *)dateFormatter;
 /**
- Creates a map with a number formatter. If the input object is an NSNumber the number formatter will be appied.
+ Creates a map with a number formatter. 
+ If the input object is an NSNumber the number formatter will return an NSString.
+ If the input object is an NSString the number formatter will return an NSNumber.
  @param inputKeyPath
  The foreign key to match with the local key.
  @param coreDataKey

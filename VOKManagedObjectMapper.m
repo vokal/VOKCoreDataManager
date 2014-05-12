@@ -8,7 +8,6 @@
 
 @interface VOKManagedObjectMap (VOKdefaultFormatters)
 + (NSDateFormatter *)vok_defaultDateFormatter;
-+ (NSNumberFormatter *)vok_defaultNumberFormatter;
 @end
 
 @interface VOKManagedObjectDefaultMapper : VOKManagedObjectMapper
@@ -98,16 +97,17 @@
 
 - (id)checkNumber:(id)inputObject withNumberFormatter:(NSNumberFormatter *)numberFormatter
 {
-    if (![inputObject isKindOfClass:[NSString class]]) {
+    if ([inputObject isKindOfClass:[NSNumber class]]) {
         id numberString = [numberFormatter stringFromNumber:inputObject];
         return numberString ? numberString : inputObject;
     }
 
-    //TODO: fix this bug
-    //Bug: using DEFAULT mapper, if the input string COULD be made a number it WILL be made a number.
-    //Be wary of the default mapper when dealing with numbers
-    id number = [numberFormatter numberFromString:inputObject];
-    return number ? number : inputObject;
+    if ([inputObject isKindOfClass:[NSString class]]) {
+        id number = [numberFormatter numberFromString:inputObject];
+        return number ? number : inputObject;
+    }
+
+    return inputObject;
 }
 
 - (id)checkDate:(id)inputObject withDateFormatter:(NSDateFormatter *)dateFormatter
@@ -234,7 +234,9 @@ NSString *const period = @".";
     [inputDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         id inputObject = obj;
         inputObject = [self checkDate:inputObject withDateFormatter:[VOKManagedObjectMap vok_defaultDateFormatter]];
-        inputObject = [self checkNumber:inputObject withNumberFormatter:[VOKManagedObjectMap vok_defaultNumberFormatter]];
+//        inputObject = [self checkNumber:inputObject withNumberFormatter:nil];
+//default number formatter does not work as expected
+//using DEFAULT mapper, if the input string COULD be made a number it WILL be made a number.
         inputObject = [self checkClass:inputObject managedObject:object key:key];
         inputObject = [self checkNull:inputObject];
         [object safeSetValue:inputObject forKey:key];
