@@ -99,7 +99,8 @@
 - (id)checkNumber:(id)inputObject withNumberFormatter:(NSNumberFormatter *)numberFormatter
 {
     if (![inputObject isKindOfClass:[NSString class]]) {
-        return inputObject;
+        id numberString = [numberFormatter stringFromNumber:inputObject];
+        return numberString ? numberString : inputObject;
     }
 
     //TODO: fix this bug
