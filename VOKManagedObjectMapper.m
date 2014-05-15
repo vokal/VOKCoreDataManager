@@ -67,11 +67,11 @@
 
 - (void)updateForeignComparisonKey
 {
-    [self.mapsArray enumerateObjectsUsingBlock:^(VOKManagedObjectMap *aMap, NSUInteger idx, BOOL *stop) {
+    for (VOKManagedObjectMap *aMap in self.mapsArray) {
         if ([aMap.coreDataKey isEqualToString:self.uniqueComparisonKey]) {
             _foreignUniqueComparisonKey = aMap.inputKeyPath;
         }
-    }];
+    }
 }
 
 #pragma mark - Description
@@ -166,28 +166,28 @@
 
 - (void)setInformationFromDictionary:(NSDictionary *)inputDict forManagedObject:(NSManagedObject *)object
 {
-    [self.mapsArray enumerateObjectsUsingBlock:^(VOKManagedObjectMap *aMap, NSUInteger idx, BOOL *stop) {
+    for (VOKManagedObjectMap *aMap in self.mapsArray) {
         id inputObject = [inputDict valueForKeyPath:aMap.inputKeyPath];
         inputObject = [self checkDate:inputObject withDateFormatter:aMap.dateFormatter];
         inputObject = [self checkNumber:inputObject withNumberFormatter:aMap.numberFormatter];
-        inputObject = [self checkClass:inputObject managedObject:object key:aMap.coreDataKey];        
+        inputObject = [self checkClass:inputObject managedObject:object key:aMap.coreDataKey];
         inputObject = [self checkNull:inputObject];
         [object safeSetValue:inputObject forKey:aMap.coreDataKey];
-    }];
+    }
 }
 
 - (NSDictionary *)dictionaryRepresentationOfManagedObject:(NSManagedObject *)object
 {
     NSMutableDictionary *outputDict = [NSMutableDictionary new];
-    [self.mapsArray enumerateObjectsUsingBlock:^(VOKManagedObjectMap *aMap, NSUInteger idx, BOOL *stop) {
+    for (VOKManagedObjectMap *aMap in self.mapsArray) {
         id outputObject = [object valueForKey:aMap.coreDataKey];
         outputObject = [self checkString:outputObject withDateFormatter:aMap.dateFormatter];
         outputObject = [self checkString:outputObject withNumberFormatter:aMap.numberFormatter];
         if (outputObject) {
             outputDict[aMap.inputKeyPath] = outputObject;
         }
-    }];
-    
+    }
+
     return [outputDict copy];
 }
 
@@ -195,7 +195,7 @@ NSString *const period = @".";
 - (NSDictionary *)hierarchicalDictionaryRepresentationOfManagedObject:(NSManagedObject *)object
 {
     NSMutableDictionary *outputDict = [NSMutableDictionary new];
-    [self.mapsArray enumerateObjectsUsingBlock:^(VOKManagedObjectMap *aMap, NSUInteger idx, BOOL *stop) {
+    for (VOKManagedObjectMap *aMap in self.mapsArray) {
         id outputObject = [object valueForKey:aMap.coreDataKey];
         outputObject = [self checkString:outputObject withDateFormatter:aMap.dateFormatter];
         outputObject = [self checkString:outputObject withNumberFormatter:aMap.numberFormatter];
@@ -205,7 +205,7 @@ NSString *const period = @".";
         if (outputObject) {
             [outputDict setValue:outputObject forKeyPath:aMap.inputKeyPath];
         }
-    }];
+    }
 
     return [outputDict copy];
 }
