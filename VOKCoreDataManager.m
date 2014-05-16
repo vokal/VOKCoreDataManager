@@ -436,9 +436,13 @@ static VOKCoreDataManager *VOK_SharedObject;
 
 - (void)tempContextSaved:(NSNotification *)notification
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    if ([NSOperationQueue mainQueue] == [NSOperationQueue currentQueue]) {
         [[self managedObjectContext] mergeChangesFromContextDidSaveNotification:notification];
-    });
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [[self managedObjectContext] mergeChangesFromContextDidSaveNotification:notification];
+        });
+    }
 }
 
 - (NSManagedObjectContext *)temporaryContext
