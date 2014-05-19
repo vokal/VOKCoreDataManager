@@ -225,34 +225,30 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSArray *existingObjectArray;
 
     if (mapper.uniqueComparisonKey) {
-        NSMutableArray *safeArrayOfUniqueKeys = [NSMutableArray array];
         NSArray *arrayOfUniqueKeys = [inputArray valueForKey:mapper.foreignUniqueComparisonKey];
-        NSNull *nullObj = [NSNull null];
-        [arrayOfUniqueKeys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            if (![nullObj isEqual:obj]) {
-                [safeArrayOfUniqueKeys addObject:obj];
-            }
-        }];
-        arrayOfUniqueKeys = [safeArrayOfUniqueKeys copy];
+        //filter out all NSNull's
+        arrayOfUniqueKeys = [arrayOfUniqueKeys filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"self != nil"]];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(%K IN %@)", mapper.uniqueComparisonKey, arrayOfUniqueKeys];
         existingObjectArray = [self arrayForClass:objectClass withPredicate:predicate forContext:contextOrNil];
     }
-    
+
     NSMutableArray *returnArray = [NSMutableArray array];
-    [inputArray enumerateObjectsUsingBlock:^(NSDictionary *inputDict, NSUInteger idx, BOOL *stop) {
+    
+    for (NSDictionary *inputDict in inputArray) {
         if (![inputDict isKindOfClass:[NSDictionary class]]) {
             CDLog(@"ERROR\nExpecting an NSArray full of NSDictionaries");
-            return;
+            break;
         }
 
         NSManagedObject *returnObject;
-
+        
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", mapper.uniqueComparisonKey, [inputDict valueForKey:mapper.foreignUniqueComparisonKey]];
         NSArray *matchingObjects = [existingObjectArray filteredArrayUsingPredicate:predicate];
         NSUInteger matchingObjectsCount = [matchingObjects count];
+
         if (matchingObjectsCount) {
             NSAssert(matchingObjectsCount < 2, @"UNIQUE IDENTIFIER IS NOT UNIQUE. MORE THAN ONE MATCHING OBJECT FOUND");
-            returnObject = matchingObjects[0];
+            returnObject = [matchingObjects firstObject];
             if (mapper.overwriteObjectsWithServerChanges) {
                 [mapper setInformationFromDictionary:inputDict forManagedObject:returnObject];
             }
@@ -260,8 +256,9 @@ static VOKCoreDataManager *VOK_SharedObject;
             returnObject = [self managedObjectOfClass:objectClass inContext:contextOrNil];
             [mapper setInformationFromDictionary:inputDict forManagedObject:returnObject];
         }
+
         [returnArray addObject:returnObject];
-    }];
+    };
     
     return [returnArray copy];
 }
