@@ -29,7 +29,7 @@
 #import <CoreData/CoreData.h>
 
 #import "VOKManagedObjectMapper.h"
-#import "VOKManagedObject.h"
+#import "NSManagedObject+VOKManagedObjectAdditions.h"
 
 typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
     /// No handling of a failed migration, will likely cause app instability and crashing when a migration fails.

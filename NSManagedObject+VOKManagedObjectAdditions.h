@@ -14,7 +14,7 @@
  @param key
  The key to set.
  */
-- (void)safeSetValue:(id)value forKey:(NSString *)key;
+- (void)vok_safeSetValue:(id)value forKey:(NSString *)key;
 
 /**
  Creates a dictionary based on the set mapping. This should round-trip data from dictionaries to core data and back.
@@ -22,7 +22,7 @@
  @return
  An NSDictioary matching the original input dictionary.
  */
-- (NSDictionary *)dictionaryRepresentation;
+- (NSDictionary *)vok_dictionaryRepresentation;
 
 /**
  Creates a dictionary based on the set mapping. This should round-trip data from dictionaries to core data and back.
@@ -30,14 +30,14 @@
  @return
  An NSDictioary matching the original input dictionary.
  */
-- (NSDictionary *)dictionaryRepresentationRespectingKeyPaths;
+- (NSDictionary *)vok_dictionaryRepresentationRespectingKeyPaths;
 
 /**
  A convenience methods to create a new instance of a VOKManagedObject subclass.
  @return
  A new managed object subclass in the main context.
  */
-+ (instancetype)newInstance;
++ (instancetype)vok_newInstance;
 
 /**
  A convenience methods to create a new instance of a VOKManagedObject subclass.
@@ -46,7 +46,7 @@
  @return
  A new managed object subclass in the main context.
  */
-+ (instancetype)newInstanceWithContext:(NSManagedObjectContext *)contextOrNil;
++ (instancetype)vok_newInstanceWithContext:(NSManagedObjectContext *)contextOrNil;
 
 /*
  Create or update many NSManagedObjects, respecting overwriteObjectsWithServerChanges.
@@ -59,7 +59,7 @@
  @return 
  An array of this subclass of NSManagedObject.
  **/
-+ (NSArray *)addWithArray:(NSArray *)inputArray forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
++ (NSArray *)vok_addWithArray:(NSArray *)inputArray forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
 
 /*
  Create or update a single NSManagedObject, respecting overwriteObjectsWithServerChanges.
@@ -72,14 +72,14 @@
  @return
  An instance of this subclass of NSManagedObject.
  **/
-+ (instancetype)addWithDictionary:(NSDictionary *)inputDict forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
++ (instancetype)vok_addWithDictionary:(NSDictionary *)inputDict forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
 
 /*
  Convenience method to create a fetch request.
  @return
  A fetch request of the current class.
  */
-+ (NSFetchRequest *)fetchRequest;
++ (NSFetchRequest *)vok_fetchRequest;
 
 /*
  Convenience method to create a fetch request with a predicate.
@@ -88,7 +88,7 @@
  @return
  A fetch request on the given class.
  */
-+ (NSFetchRequest *)fetchRequestWithPredicate:(NSPredicate *)predicate;
++ (NSFetchRequest *)vok_fetchRequestWithPredicate:(NSPredicate *)predicate;
 
 /*
  Checks the count to determine if entities exist matching the predicate.
@@ -99,7 +99,7 @@
  @return
  YES the object exists or NO it does not.
  */
-+ (BOOL)existsForPredicate:(NSPredicate *)predicate forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
++ (BOOL)vok_existsForPredicate:(NSPredicate *)predicate forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
 
 /*
  Returns all entites matching the predicate.
@@ -110,7 +110,7 @@
  @return
  NSArray full of the instances of the current class.
  */
-+ (NSArray *)fetchAllForPredicate:(NSPredicate *)predicate forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
++ (NSArray *)vok_fetchAllForPredicate:(NSPredicate *)predicate forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
 
 /*
  Returns one entite matching the predicate. Asserts the count is exactly 1. If more objects are returned this method will let you know.
@@ -121,6 +121,6 @@
  @return
  An instance of the current class.
  */
-+ (instancetype)fetchForPredicate:(NSPredicate *)predicate forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
++ (instancetype)vok_fetchForPredicate:(NSPredicate *)predicate forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
 
 @end

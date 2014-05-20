@@ -172,7 +172,7 @@
         inputObject = [self checkNumber:inputObject withNumberFormatter:aMap.numberFormatter];
         inputObject = [self checkClass:inputObject managedObject:object key:aMap.coreDataKey];
         inputObject = [self checkNull:inputObject];
-        [object safeSetValue:inputObject forKey:aMap.coreDataKey];
+        [object vok_safeSetValue:inputObject forKey:aMap.coreDataKey];
     }
 }
 
@@ -239,7 +239,7 @@ NSString *const period = @".";
 //using DEFAULT mapper, if the input string COULD be made a number it WILL be made a number.
         inputObject = [self checkClass:inputObject managedObject:object key:key];
         inputObject = [self checkNull:inputObject];
-        [object safeSetValue:inputObject forKey:key];
+        [object vok_safeSetValue:inputObject forKey:key];
     }];
 }
 
