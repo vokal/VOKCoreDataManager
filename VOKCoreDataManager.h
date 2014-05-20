@@ -110,7 +110,7 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
  */
 - (NSArray *)importArray:(NSArray *)inputArray
                 forClass:(Class)objectClass
-             withContext:(NSManagedObjectContext*)contextOrNil;
+             withContext:(NSManagedObjectContext *)contextOrNil;
 
 /**
  Deserializes a single NSDictionaries full of strings and updates instances the given object.

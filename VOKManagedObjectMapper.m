@@ -215,7 +215,7 @@ NSString *const period = @".";
     __block NSMutableDictionary *nestedDict = outputDict;
     NSUInteger lastObjectIndex = [components count] - 1;
     [components enumerateObjectsUsingBlock:^(NSString *keyPathComponent, NSUInteger idx, BOOL *stop) {
-        if(![nestedDict valueForKey:keyPathComponent] && idx < lastObjectIndex) {
+        if (![nestedDict valueForKey:keyPathComponent] && idx < lastObjectIndex) {
             nestedDict[keyPathComponent] = [NSMutableDictionary dictionary];
         }
         nestedDict = [nestedDict valueForKey:keyPathComponent];

@@ -61,7 +61,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 + (VOKCoreDataManager *)sharedInstance
 {
     static dispatch_once_t pred;
-    dispatch_once(&pred,^{
+    dispatch_once(&pred, ^{
         VOK_SharedObject = [[self alloc] init];
         VOK_WritingQueue = [[NSOperationQueue alloc] init];
         [VOK_WritingQueue setMaxConcurrentOperationCount:1];
@@ -131,6 +131,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Initializers
+
 - (void)initManagedObjectModel
 {
     NSURL *modelURL = [[NSBundle bundleForClass:[self class]] URLForResource:self.resource withExtension:@"momd"];
@@ -200,6 +201,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Create and configure
+
 - (NSManagedObject *)managedObjectOfClass:(Class)managedObjectClass inContext:(NSManagedObjectContext *)contextOrNil
 {
     contextOrNil = [self safeContext:contextOrNil];
@@ -216,7 +218,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     return NO;
 }
 
-- (NSArray *)importArray:(NSArray *)inputArray forClass:(Class)objectClass withContext:(NSManagedObjectContext*)contextOrNil;
+- (NSArray *)importArray:(NSArray *)inputArray forClass:(Class)objectClass withContext:(NSManagedObjectContext *)contextOrNil;
 {
     VOKManagedObjectMapper *mapper = [self mapperForClass:objectClass];
 
@@ -270,6 +272,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Convenient Output
+
 - (NSDictionary *)dictionaryRepresentationOfManagedObject:(NSManagedObject *)object respectKeyPaths:(BOOL)keyPathsEnabled
 {
     VOKManagedObjectMapper *mapper = [self mapperForClass:[object class]];
@@ -281,6 +284,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Count, Fetch, and Delete
+
 - (NSUInteger)countForClass:(Class)managedObjectClass
 {
     return [self countForClass:managedObjectClass forContext:nil];
@@ -299,7 +303,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSError *error;
     NSUInteger count = [contextOrNil countForFetchRequest:fetchRequest error:&error];
     if (error) {
-        CDLog(@"%s Fetch Request Error\n%@",__PRETTY_FUNCTION__ ,[error localizedDescription]);
+        CDLog(@"%s Fetch Request Error\n%@", __PRETTY_FUNCTION__, [error localizedDescription]);
     }
 
     return count;
@@ -323,7 +327,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSError *error;
     NSArray *results = [contextOrNil executeFetchRequest:fetchRequest error:&error];
     if (error) {
-        CDLog(@"%s Fetch Request Error\n%@",__PRETTY_FUNCTION__ ,[error localizedDescription]);
+        CDLog(@"%s Fetch Request Error\n%@", __PRETTY_FUNCTION__, [error localizedDescription]);
     }
 
     return results;
@@ -364,7 +368,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSError *error;
     NSArray *results = [contextOrNil executeFetchRequest:fetchRequest error:&error];
     if (error) {
-        CDLog(@"%s Fetch Request Error\n%@",__PRETTY_FUNCTION__ ,[error localizedDescription]);
+        CDLog(@"%s Fetch Request Error\n%@", __PRETTY_FUNCTION__, [error localizedDescription]);
         return NO;
     }
 
@@ -376,6 +380,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Thread Safety with Main MOC
+
 - (NSManagedObjectContext *)safeContext:(NSManagedObjectContext *)context
 {
     if (!context) {
@@ -390,6 +395,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Context Saving and Merging
+
 - (void)saveMainContext
 {
     if ([NSOperationQueue mainQueue] == [NSOperationQueue currentQueue]) {
@@ -457,6 +463,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Convenience Methods
+
 + (void)writeToTemporaryContext:(void (^)(NSManagedObjectContext *tempContext))writeBlock
                      completion:(void (^)(void))completion
 {
@@ -484,7 +491,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 
 - (VOKManagedObjectMapper *)mapperForClass:(Class)objectClass
 {
-    VOKManagedObjectMapper * mapper = self.mapperCollection[NSStringFromClass(objectClass)];
+    VOKManagedObjectMapper *mapper = self.mapperCollection[NSStringFromClass(objectClass)];
     while (!mapper && objectClass) {
         objectClass = [objectClass superclass];
         mapper = self.mapperCollection[NSStringFromClass(objectClass)];
@@ -506,7 +513,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 {
     NSArray *stores = [[self persistentStoreCoordinator] persistentStores];
 
-    for(NSPersistentStore *store in stores) {
+    for (NSPersistentStore *store in stores) {
         [[self persistentStoreCoordinator] removePersistentStore:store error:nil];
         if (self.databaseFilename) {
             [[NSFileManager defaultManager] removeItemAtPath:store.URL.path error:nil];            

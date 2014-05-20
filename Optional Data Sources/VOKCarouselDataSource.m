@@ -94,8 +94,8 @@
     return [super fetchedResultsController];
 }
 
-
 #pragma mark - UICollectionVIew
+
 - (void)reloadData
 {
     NSError *error = nil;
@@ -119,8 +119,7 @@
        atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type
       newIndexPath:(NSIndexPath *)newIndexPath
 {
-    switch(type)
-    {
+    switch (type) {
         case NSFetchedResultsChangeInsert:
             [self.carousel insertItemAtIndex:newIndexPath.row animated:YES];
             break;
@@ -178,6 +177,5 @@
     
     return view;
 }
-
 
 @end

@@ -70,7 +70,6 @@
                           delegate:delegate];
 }
 
-
 - (id)initWithPredicate:(NSPredicate *)predicate
               cacheName:(NSString *)cacheName
               tableView:(UITableView *)tableView

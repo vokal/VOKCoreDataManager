@@ -99,8 +99,8 @@
     return [super fetchedResultsController];
 }
 
-
 #pragma mark - UICollectionVIew
+
 - (void)reloadData
 {
     NSError *error = nil;
@@ -146,7 +146,7 @@
     
     NSMutableDictionary *change = [NSMutableDictionary new];
     
-    switch(type) {
+    switch (type) {
         case NSFetchedResultsChangeInsert:
             change[@(type)] = @(sectionIndex);
             break;
@@ -164,8 +164,7 @@
 {
     
     NSMutableDictionary *change = [NSMutableDictionary new];
-    switch(type)
-    {
+    switch (type) {
         case NSFetchedResultsChangeInsert:
             change[@(type)] = newIndexPath;
             break;
@@ -184,17 +183,14 @@
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller
 {
-    if ([_sectionChanges count] > 0)
-    {
+    if ([_sectionChanges count] > 0) {
         [self.collectionView performBatchUpdates:^{
             
-            for (NSDictionary *change in _sectionChanges)
-            {
+            for (NSDictionary *change in _sectionChanges) {
                 [change enumerateKeysAndObjectsUsingBlock:^(NSNumber *key, id obj, BOOL *stop) {
                     
                     NSFetchedResultsChangeType type = [key unsignedIntegerValue];
-                    switch (type)
-                    {
+                    switch (type) {
                         case NSFetchedResultsChangeInsert:
                             [self.collectionView insertSections:[NSIndexSet indexSetWithIndex:[obj unsignedIntegerValue]]];
                             break;
@@ -210,8 +206,7 @@
         } completion:nil];
     }
     
-    if ([_objectChanges count] > 0 && [_sectionChanges count] == 0)
-    {
+    if ([_objectChanges count] > 0 && [_sectionChanges count] == 0) {
         
         if ([self shouldReloadCollectionViewToPreventKnownIssue]) {
             // This is to prevent a bug in UICollectionView from occurring.
@@ -225,13 +220,11 @@
             
             [self.collectionView performBatchUpdates:^{
                 
-                for (NSDictionary *change in _objectChanges)
-                {
+                for (NSDictionary *change in _objectChanges) {
                     [change enumerateKeysAndObjectsUsingBlock:^(NSNumber *key, id obj, BOOL *stop) {
                         
                         NSFetchedResultsChangeType type = [key unsignedIntegerValue];
-                        switch (type)
-                        {
+                        switch (type) {
                             case NSFetchedResultsChangeInsert:
                                 [self.collectionView insertItemsAtIndexPaths:@[obj]];
                                 break;
@@ -255,7 +248,8 @@
     [_objectChanges removeAllObjects];
 }
 
-- (BOOL)shouldReloadCollectionViewToPreventKnownIssue {
+- (BOOL)shouldReloadCollectionViewToPreventKnownIssue
+{
     __block BOOL shouldReload = NO;
     for (NSDictionary *change in _objectChanges) {
         [change enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {

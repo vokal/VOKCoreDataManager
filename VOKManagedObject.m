@@ -41,12 +41,12 @@
 
 #pragma mark - Add Objects
 
-+ (NSArray *)addWithArray:(NSArray *)inputArray forManagedObjectContext:(NSManagedObjectContext*)contextOrNil
++ (NSArray *)addWithArray:(NSArray *)inputArray forManagedObjectContext:(NSManagedObjectContext *)contextOrNil
 {
     return [[VOKCoreDataManager sharedInstance] importArray:inputArray forClass:[self class] withContext:contextOrNil];
 }
 
-+ (instancetype)addWithDictionary:(NSDictionary *)inputDict forManagedObjectContext:(NSManagedObjectContext*)contextOrNil
++ (instancetype)addWithDictionary:(NSDictionary *)inputDict forManagedObjectContext:(NSManagedObjectContext *)contextOrNil
 {
     if (!inputDict || [[NSNull null] isEqual:inputDict]) {
         return nil;

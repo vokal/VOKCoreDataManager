@@ -39,7 +39,6 @@
     }
 }
 
-
 - (void)loadingHasFinished
 {
     [self.indicator stopAnimating];

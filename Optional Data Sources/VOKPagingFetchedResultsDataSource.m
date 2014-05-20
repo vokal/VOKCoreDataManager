@@ -18,12 +18,13 @@
 @property BOOL isLoading;
 @property CGFloat triggerDistance;
 @property UIEdgeInsets orginalInsets;
-@end
 
+@end
 
 @implementation VOKPagingFetchedResultsDataSource
 
 #pragma mark Setup
+
 - (void)setupForTriggerDistance:(CGFloat)overscrollTriggerDistance
                        upAction:(VIPagingResultsAction)upPageActionOrNil
                      headerView:(UIView<VIPagingAccessory> *)headerViewOrNil
@@ -86,8 +87,6 @@
         [self.footerView setFrame:(CGRect){0, MAX(self.tableView.contentSize.height, self.tableView.bounds.size.height), self.footerView.frame.size}];
     }
 }
-
-
 
 #pragma mark Scrollview Delegates
 

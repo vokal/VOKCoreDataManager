@@ -59,7 +59,7 @@
  @return 
  An array of this subclass of NSManagedObject.
  **/
-+ (NSArray *)addWithArray:(NSArray *)inputArray forManagedObjectContext:(NSManagedObjectContext*)contextOrNil;
++ (NSArray *)addWithArray:(NSArray *)inputArray forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
 
 /*
  Create or update a single NSManagedObject, respecting overwriteObjectsWithServerChanges.
@@ -72,7 +72,7 @@
  @return
  An instance of this subclass of NSManagedObject.
  **/
-+ (instancetype)addWithDictionary:(NSDictionary *)inputDict forManagedObjectContext:(NSManagedObjectContext*)contextOrNil;
++ (instancetype)addWithDictionary:(NSDictionary *)inputDict forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
 
 /*
  Convenience method to create a fetch request.
