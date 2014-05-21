@@ -8,6 +8,8 @@
 
 #import "VOKCarouselDataSource.h"
 
+#import "VOKCoreDataManagerInternalMacros.h"
+
 @implementation VOKCarouselDataSource
 
 - (id)initWithPredicate:(NSPredicate *)predicate
@@ -100,7 +102,7 @@
 {
     NSError *error = nil;
     if (![self.fetchedResultsController performFetch:&error]) {
-        CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        VOK_CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
     //FOR REVIEW controllerWillChangeContent is not being called in tests - this updates the table explicitly

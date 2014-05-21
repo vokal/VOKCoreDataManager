@@ -5,6 +5,7 @@
 
 #import "VOKManagedObjectMapper.h"
 #import "VOKCoreDataManager.h"
+#import "VOKCoreDataManagerInternalMacros.h"
 
 @interface VOKManagedObjectMap (VOKdefaultFormatters)
 + (NSDateFormatter *)vok_defaultDateFormatter;
@@ -136,7 +137,7 @@
 {
     Class expectedClass = [self expectedClassForObject:object andKey:key];
     if (![inputObject isKindOfClass:expectedClass]) {
-        CDLog(@"Wrong kind of class for %@\nProperty: %@ \nExpected: %@\nReceived: %@",
+        VOK_CDLog(@"Wrong kind of class for %@\nProperty: %@ \nExpected: %@\nReceived: %@",
               object,
               key,
               NSStringFromClass(expectedClass),

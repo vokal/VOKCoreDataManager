@@ -5,6 +5,7 @@
 
 #import "VOKFetchedResultsDataSource.h"
 #import "VOKCoreDataManager.h"
+#import "VOKCoreDataManagerInternalMacros.h"
 
 @interface VOKFetchedResultsDataSource ()
 
@@ -150,10 +151,10 @@
 
 - (void)reloadFetchedResults:(NSNotification *)note
 {
-    CDLog(@"NSNotification: Underlying data changed ... refreshing!");
+    VOK_CDLog(@"NSNotification: Underlying data changed ... refreshing!");
     NSError *error = nil;
     if (![_fetchedResultsController performFetch:&error]) {
-        CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        VOK_CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
 }
@@ -162,7 +163,7 @@
 {
     NSError *error = nil;
     if (![_fetchedResultsController performFetch:&error]) {
-        CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        VOK_CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
     //FOR TESTING ONLY, NOT NECESSARY
@@ -173,7 +174,7 @@
 {
 //    NSError *error = nil;
 //    if (![_fetchedResultsController performFetch:&error]) {
-//        CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
+//        VOK_CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
 //        abort();
 //    }
    return _fetchedResultsController.fetchedObjects;

@@ -4,6 +4,7 @@
 //
 
 #import "VOKCoreDataManager.h"
+#import "VOKCoreDataManagerInternalMacros.h"
 
 @interface VOKCoreDataManager () {
     NSManagedObjectContext *_managedObjectContext;
@@ -97,7 +98,7 @@ static VOKCoreDataManager *VOK_SharedObject;
         [tempManagedObjectContext setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
         [tempManagedObjectContext setPersistentStoreCoordinator:coordinator];
     } else {
-        CDLog(@"Coordinator is nil & context is %@", [tempManagedObjectContext description]);
+        VOK_CDLog(@"Coordinator is nil & context is %@", [tempManagedObjectContext description]);
     }
 
     return tempManagedObjectContext;
@@ -173,14 +174,14 @@ static VOKCoreDataManager *VOK_SharedObject;
 
         if (self.migrationFailureOptions == VOKMigrationFailureOptionWipeRecoveryAndAlert ||
             self.migrationFailureOptions == VOKMigrationFailureOptionWipeRecovery) {
-            CDLog(@"Full database delete and rebuild");
+            VOK_CDLog(@"Full database delete and rebuild");
             [[NSFileManager defaultManager] removeItemAtPath:storeURL.path error:nil];
             if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
                                                            configuration:nil
                                                                      URL:storeURL
                                                                  options:nil
                                                                    error:&error]) {
-                CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
+                VOK_CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
                 abort();
             }
         }
@@ -238,7 +239,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     
     for (NSDictionary *inputDict in inputArray) {
         if (![inputDict isKindOfClass:[NSDictionary class]]) {
-            CDLog(@"ERROR\nExpecting an NSArray full of NSDictionaries");
+            VOK_CDLog(@"ERROR\nExpecting an NSArray full of NSDictionaries");
             break;
         }
 
@@ -303,7 +304,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSError *error;
     NSUInteger count = [contextOrNil countForFetchRequest:fetchRequest error:&error];
     if (error) {
-        CDLog(@"%s Fetch Request Error\n%@", __PRETTY_FUNCTION__, [error localizedDescription]);
+        VOK_CDLog(@"%s Fetch Request Error\n%@", __PRETTY_FUNCTION__, [error localizedDescription]);
     }
 
     return count;
@@ -327,7 +328,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSError *error;
     NSArray *results = [contextOrNil executeFetchRequest:fetchRequest error:&error];
     if (error) {
-        CDLog(@"%s Fetch Request Error\n%@", __PRETTY_FUNCTION__, [error localizedDescription]);
+        VOK_CDLog(@"%s Fetch Request Error\n%@", __PRETTY_FUNCTION__, [error localizedDescription]);
     }
 
     return results;
@@ -340,7 +341,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSError *error;
 
     if (!objectID) {
-        CDLog(@"No object exists at\n%@", uri);
+        VOK_CDLog(@"No object exists at\n%@", uri);
         return nil;
     }
 
@@ -348,7 +349,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     id returnObject = [contextOrNil existingObjectWithID:objectID error:&error];
 
     if (!returnObject) {
-        CDLog(@"No object exists at\n%@.\n\nError:\n%@", uri, error);
+        VOK_CDLog(@"No object exists at\n%@.\n\nError:\n%@", uri, error);
     }
 
     return returnObject;
@@ -368,7 +369,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSError *error;
     NSArray *results = [contextOrNil executeFetchRequest:fetchRequest error:&error];
     if (error) {
-        CDLog(@"%s Fetch Request Error\n%@", __PRETTY_FUNCTION__, [error localizedDescription]);
+        VOK_CDLog(@"%s Fetch Request Error\n%@", __PRETTY_FUNCTION__, [error localizedDescription]);
         return NO;
     }
 
@@ -422,7 +423,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 {
     NSError *error;
     if (![context save:&error]) {
-        CDLog(@"Unresolved error %@, %@", error, [error localizedDescription]);
+        VOK_CDLog(@"Unresolved error %@, %@", error, [error localizedDescription]);
     }
 }
 
