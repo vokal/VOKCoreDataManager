@@ -53,6 +53,13 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
 - (NSManagedObjectContext *)managedObjectContext;
 
 /**
+ *  The managed object model, based on the resource and database.
+ *
+ *  @return The managed object model
+ */
+- (NSManagedObjectModel *)managedObjectModel;
+
+/**
  Set the name of the managed object model and the name of the SQL lite store on disk. Call this first when you setup the core data stack.
  @param resource
  The filename of the mom or momd file in your project. If nil the first model found in the main bundle will be used.

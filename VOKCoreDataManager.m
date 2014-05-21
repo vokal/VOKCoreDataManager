@@ -19,7 +19,6 @@
 //Getters
 - (NSManagedObjectContext *)tempManagedObjectContext;
 - (NSManagedObjectContext *)managedObjectContext;
-- (NSManagedObjectModel *)managedObjectModel;
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator;
 
 //Initializers
@@ -206,7 +205,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 - (NSManagedObject *)managedObjectOfClass:(Class)managedObjectClass inContext:(NSManagedObjectContext *)contextOrNil
 {
     contextOrNil = [self safeContext:contextOrNil];
-    return [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(managedObjectClass) inManagedObjectContext:contextOrNil];
+    return [NSEntityDescription insertNewObjectForEntityForName:[managedObjectClass vok_entityName] inManagedObjectContext:contextOrNil];
 }
 
 - (BOOL)setObjectMapper:(VOKManagedObjectMapper *)objMapper forClass:(Class)objectClass

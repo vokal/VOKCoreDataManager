@@ -33,6 +33,13 @@
 - (NSDictionary *)vok_dictionaryRepresentationRespectingKeyPaths;
 
 /**
+ *  Gets the entity name string for the particular NSManagedObject subclass on which the method is called.
+ *
+ *  @return The entity name string
+ */
++ (NSString *)vok_entityName;
+
+/**
  A convenience methods to create a new instance of a VOKManagedObject subclass.
  @return
  A new managed object subclass in the main context.
