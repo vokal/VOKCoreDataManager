@@ -98,13 +98,11 @@
 - (id)checkNumber:(id)inputObject withNumberFormatter:(NSNumberFormatter *)numberFormatter
 {
     if ([inputObject isKindOfClass:[NSNumber class]]) {
-        id numberString = [numberFormatter stringFromNumber:inputObject];
-        return numberString ? numberString : inputObject;
+        return [numberFormatter stringFromNumber:inputObject] ?: inputObject;
     }
 
     if ([inputObject isKindOfClass:[NSString class]]) {
-        id number = [numberFormatter numberFromString:inputObject];
-        return number ? number : inputObject;
+        return [numberFormatter numberFromString:inputObject] ?: inputObject;
     }
 
     return inputObject;
@@ -115,8 +113,7 @@
     if (![inputObject isKindOfClass:[NSString class]]) {
         return inputObject;
     }
-    id date = [dateFormatter dateFromString:inputObject];
-    return date ? date : inputObject;
+    return [dateFormatter dateFromString:inputObject] ?: inputObject;
 }
 
 - (id)checkString:(id)outputObject withNumberFormatter:(NSNumberFormatter *)numberFormatter
@@ -124,8 +121,7 @@
     if (![outputObject isKindOfClass:[NSNumber class]]) {
         return outputObject;
     }
-    id numberString = [numberFormatter stringFromNumber:outputObject];
-    return numberString ? numberString : outputObject;
+    return [numberFormatter stringFromNumber:outputObject] ?: outputObject;
 }
 
 - (id)checkString:(id)outputObject withDateFormatter:(NSDateFormatter *)dateFormatter
@@ -133,8 +129,7 @@
     if (![outputObject isKindOfClass:[NSDate class]]) {
         return outputObject;
     }
-    id dateString = [dateFormatter stringFromDate:outputObject];
-    return dateString ? dateString : outputObject;
+    return [dateFormatter stringFromDate:outputObject] ?: outputObject;
 }
 
 - (id)checkClass:(id)inputObject managedObject:(NSManagedObject *)object key:(NSString *)key
