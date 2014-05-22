@@ -7,16 +7,6 @@
 #warning "VOKCoreDataManager uses features only available in iOS SDK 5.0 and later."
 #endif
 
-#ifndef VOK_CDSELECTOR
-#   ifdef DEBUG
-#       define VOK_CDSELECTOR(x) NSStringFromSelector(@selector(x))
-#   else
-#       define VOK_CDSELECTOR(x) @#x //in release builds @#x becomes @"{x}"
-#   endif
-#endif
-
-#define MAP_FOREIGN_TO_LOCAL(x, y) [VOKManagedObjectMap mapWithForeignKeyPath:x coreDataKey:VOK_CDSELECTOR(y)]
-
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
