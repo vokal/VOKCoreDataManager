@@ -483,7 +483,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 
 - (NSFetchRequest *)fetchRequestWithClass:(Class)managedObjectClass predicate:(NSPredicate *)predicate
 {
-    NSString *entityName = NSStringFromClass(managedObjectClass);
+    NSString *entityName = [managedObjectClass vok_entityName];
     NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:entityName];
     [fetchRequest setPredicate:predicate];
     return fetchRequest;
