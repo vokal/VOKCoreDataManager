@@ -443,6 +443,7 @@ static VOKCoreDataManager *VOK_SharedObject;
             [[self managedObjectContext] mergeChangesFromContextDidSaveNotification:notification];
         });
     }
+    [self saveMainContextAndWait];
 }
 
 - (NSManagedObjectContext *)temporaryContext
