@@ -88,17 +88,15 @@ static VOKCoreDataManager *VOK_SharedObject;
 
 - (NSManagedObjectContext *)tempManagedObjectContext
 {
-    NSManagedObjectContext *tempManagedObjectContext;
-
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+    NSAssert(coordinator, @"PersistentStoreCoordinator does not exist. This is a big problem.");
+    if (!coordinator) {
+        return nil;
+    }
 
-    if (coordinator) {
-        tempManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSConfinementConcurrencyType];
+    NSManagedObjectContext *tempManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSConfinementConcurrencyType];
         [tempManagedObjectContext setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
         [tempManagedObjectContext setPersistentStoreCoordinator:coordinator];
-    } else {
-        VOK_CDLog(@"Coordinator is nil & context is %@", [tempManagedObjectContext description]);
-    }
 
     return tempManagedObjectContext;
 }
@@ -138,15 +136,19 @@ static VOKCoreDataManager *VOK_SharedObject;
     if (!modelURL) {
         modelURL = [[NSBundle bundleForClass:[self class]] URLForResource:self.resource withExtension:@"mom"];
     }
-    NSAssert(modelURL != nil, @"Managed object model not found.");
+    NSAssert(modelURL, @"Managed object model not found.");
+    if (modelURL) {
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+}
 }
 
 - (void)initPersistentStoreCoordinator
 {
     NSAssert([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue], @"Must be on the main queue when initializing persistant store coordinator");
-    NSDictionary *options = @{NSMigratePersistentStoresAutomaticallyOption: @(YES),
-                              NSInferMappingModelAutomaticallyOption: @(YES)};
+    NSDictionary *options = @{
+                              NSMigratePersistentStoresAutomaticallyOption: @YES,
+                              NSInferMappingModelAutomaticallyOption: @YES,
+                              };
 
     NSError *error;
     _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
@@ -193,12 +195,13 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
 
     NSAssert(coordinator, @"PersistentStoreCoordinator does not exist. This is a big problem.");
-    if (coordinator) {
+    if (!coordinator) {
+        return;
+    }
         _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [_managedObjectContext setPersistentStoreCoordinator:coordinator];
         [_managedObjectContext setMergePolicy:NSMergeByPropertyStoreTrumpMergePolicy];
     }
-}
 
 #pragma mark - Create and configure
 
