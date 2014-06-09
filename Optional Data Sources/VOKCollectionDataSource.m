@@ -9,6 +9,7 @@
 #import "VOKCollectionDataSource.h"
 
 #import "VOKCoreDataManager.h"
+#import "VOKCoreDataManagerInternalMacros.h"
 
 @interface VOKCollectionDataSource () {
     NSMutableArray *_objectChanges;
