@@ -5,6 +5,8 @@
 
 #import "NSManagedObject+VOKManagedObjectAdditions.h"
 
+#import <objc/runtime.h>
+
 #import "VOKCoreDataManager.h"
 
 @implementation NSManagedObject (VOKManagedObjectAdditions)
@@ -30,26 +32,33 @@
 
 + (NSString *)vok_entityName
 {
-    static NSString *vok_entityName;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static char AssociatedObjectKey;  // The key for the runtime-association.
+    
+    // Get the associated value.
+    NSString *vok_entityName = objc_getAssociatedObject(self, &AssociatedObjectKey);
+    
+    // If we didn't find an associated entity name, determine the entity name.
+    if (!vok_entityName) {
         // If we already have an entityName class method (e.g., MOGenerator-generated subclasses), use it.
-        // (Note that we have to cast self (a Class) to id to use NSObject's dynamic-selector methods, even though they work.
+        // (Note that we have to cast self (a Class) to id to use NSObject's dynamic-selector methods, even though they work.)
         if ([(id)self respondsToSelector:@selector(entityName)]) {
             vok_entityName = [(id)self performSelector:@selector(entityName)];
-            return;
-        }
-        
-        // Since we don't have an entityName class method, look up the entity name in the managed object model.
-        NSManagedObjectModel *model = [[VOKCoreDataManager sharedInstance] managedObjectModel];
-        for (NSEntityDescription *description in model.entities) {
-            if ([self isSubclassOfClass:NSClassFromString(description.managedObjectClassName)]) {
-                vok_entityName = description.name;
-                break;
+        } else {
+            
+            // Since we don't have an entityName class method, look up the entity name in the managed object model.
+            NSManagedObjectModel *model = [[VOKCoreDataManager sharedInstance] managedObjectModel];
+            for (NSEntityDescription *description in model.entities) {
+                if ([self isSubclassOfClass:NSClassFromString(description.managedObjectClassName)]) {
+                    vok_entityName = description.name;
+                    break;
+                }
             }
         }
         NSAssert(vok_entityName, @"no entity found that uses %@ as its class", NSStringFromClass(self));
-    });
+        // Save the determined entity name as an associated value.
+        objc_setAssociatedObject(self, &AssociatedObjectKey, vok_entityName, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    
     return vok_entityName;
 }
 
