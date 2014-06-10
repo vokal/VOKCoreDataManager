@@ -8,6 +8,8 @@
 
 #import "VOKCarouselDataSource.h"
 
+#import "VOKCoreDataManagerInternalMacros.h"
+
 @implementation VOKCarouselDataSource
 
 - (id)initWithPredicate:(NSPredicate *)predicate
@@ -94,13 +96,13 @@
     return [super fetchedResultsController];
 }
 
-
 #pragma mark - UICollectionVIew
+
 - (void)reloadData
 {
     NSError *error = nil;
     if (![self.fetchedResultsController performFetch:&error]) {
-        CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        VOK_CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
     //FOR REVIEW controllerWillChangeContent is not being called in tests - this updates the table explicitly
@@ -119,8 +121,7 @@
        atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type
       newIndexPath:(NSIndexPath *)newIndexPath
 {
-    switch(type)
-    {
+    switch (type) {
         case NSFetchedResultsChangeInsert:
             [self.carousel insertItemAtIndex:newIndexPath.row animated:YES];
             break;
@@ -178,6 +179,5 @@
     
     return view;
 }
-
 
 @end

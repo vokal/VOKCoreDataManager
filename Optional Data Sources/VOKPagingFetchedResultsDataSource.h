@@ -23,7 +23,7 @@ typedef void (^VICompletionAction)(void);
  *  @param fetchCompleted       Execute this block when you have finished your data fetching.
  *
  */
-typedef void (^VIPagingResultsAction)(UITableView* tableView, VICompletionAction fetchCompleted);
+typedef void (^VIPagingResultsAction)(UITableView *tableView, VICompletionAction fetchCompleted);
 
 @interface VOKPagingFetchedResultsDataSource : VOKFetchedResultsDataSource
 
@@ -50,6 +50,5 @@ typedef void (^VIPagingResultsAction)(UITableView* tableView, VICompletionAction
  *  Call to handle memory management before deallocating a view that contains this class.
  */
 - (void)cleanUpPageController;
-
 
 @end

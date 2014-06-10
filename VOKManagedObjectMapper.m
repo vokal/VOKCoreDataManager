@@ -5,6 +5,7 @@
 
 #import "VOKManagedObjectMapper.h"
 #import "VOKCoreDataManager.h"
+#import "VOKCoreDataManagerInternalMacros.h"
 
 @interface VOKManagedObjectMap (VOKdefaultFormatters)
 + (NSDateFormatter *)vok_defaultDateFormatter;
@@ -98,13 +99,11 @@
 - (id)checkNumber:(id)inputObject withNumberFormatter:(NSNumberFormatter *)numberFormatter
 {
     if ([inputObject isKindOfClass:[NSNumber class]]) {
-        id numberString = [numberFormatter stringFromNumber:inputObject];
-        return numberString ? numberString : inputObject;
+        return [numberFormatter stringFromNumber:inputObject] ?: inputObject;
     }
 
     if ([inputObject isKindOfClass:[NSString class]]) {
-        id number = [numberFormatter numberFromString:inputObject];
-        return number ? number : inputObject;
+        return [numberFormatter numberFromString:inputObject] ?: inputObject;
     }
 
     return inputObject;
@@ -115,8 +114,7 @@
     if (![inputObject isKindOfClass:[NSString class]]) {
         return inputObject;
     }
-    id date = [dateFormatter dateFromString:inputObject];
-    return date ? date : inputObject;
+    return [dateFormatter dateFromString:inputObject] ?: inputObject;
 }
 
 - (id)checkString:(id)outputObject withNumberFormatter:(NSNumberFormatter *)numberFormatter
@@ -124,8 +122,7 @@
     if (![outputObject isKindOfClass:[NSNumber class]]) {
         return outputObject;
     }
-    id numberString = [numberFormatter stringFromNumber:outputObject];
-    return numberString ? numberString : outputObject;
+    return [numberFormatter stringFromNumber:outputObject] ?: outputObject;
 }
 
 - (id)checkString:(id)outputObject withDateFormatter:(NSDateFormatter *)dateFormatter
@@ -133,15 +130,14 @@
     if (![outputObject isKindOfClass:[NSDate class]]) {
         return outputObject;
     }
-    id dateString = [dateFormatter stringFromDate:outputObject];
-    return dateString ? dateString : outputObject;
+    return [dateFormatter stringFromDate:outputObject] ?: outputObject;
 }
 
 - (id)checkClass:(id)inputObject managedObject:(NSManagedObject *)object key:(NSString *)key
 {
     Class expectedClass = [self expectedClassForObject:object andKey:key];
     if (![inputObject isKindOfClass:expectedClass]) {
-        CDLog(@"Wrong kind of class for %@\nProperty: %@ \nExpected: %@\nReceived: %@",
+        VOK_CDLog(@"Wrong kind of class for %@\nProperty: %@ \nExpected: %@\nReceived: %@",
               object,
               key,
               NSStringFromClass(expectedClass),
@@ -172,7 +168,7 @@
         inputObject = [self checkNumber:inputObject withNumberFormatter:aMap.numberFormatter];
         inputObject = [self checkClass:inputObject managedObject:object key:aMap.coreDataKey];
         inputObject = [self checkNull:inputObject];
-        [object safeSetValue:inputObject forKey:aMap.coreDataKey];
+        [object vok_safeSetValue:inputObject forKey:aMap.coreDataKey];
     }
 }
 
@@ -215,7 +211,7 @@ NSString *const period = @".";
     __block NSMutableDictionary *nestedDict = outputDict;
     NSUInteger lastObjectIndex = [components count] - 1;
     [components enumerateObjectsUsingBlock:^(NSString *keyPathComponent, NSUInteger idx, BOOL *stop) {
-        if(![nestedDict valueForKey:keyPathComponent] && idx < lastObjectIndex) {
+        if (![nestedDict valueForKey:keyPathComponent] && idx < lastObjectIndex) {
             nestedDict[keyPathComponent] = [NSMutableDictionary dictionary];
         }
         nestedDict = [nestedDict valueForKey:keyPathComponent];
@@ -239,7 +235,7 @@ NSString *const period = @".";
 //using DEFAULT mapper, if the input string COULD be made a number it WILL be made a number.
         inputObject = [self checkClass:inputObject managedObject:object key:key];
         inputObject = [self checkNull:inputObject];
-        [object safeSetValue:inputObject forKey:key];
+        [object vok_safeSetValue:inputObject forKey:key];
     }];
 }
 

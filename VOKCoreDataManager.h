@@ -7,29 +7,11 @@
 #warning "VOKCoreDataManager uses features only available in iOS SDK 5.0 and later."
 #endif
 
-#ifndef CDLog
-#   ifdef DEBUG
-#       define CDLog(...) NSLog(@"%s\n%@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__])
-#   else
-#       define CDLog(...) /* */
-#   endif
-#endif
-
-#ifndef CDSELECTOR
-#   ifdef DEBUG
-#       define CDSELECTOR(x) NSStringFromSelector(@selector(x))
-#   else
-#       define CDSELECTOR(x) @#x //in release builds @#x becomes @"{x}"
-#   endif
-#endif
-
-#define MAP_FOREIGN_TO_LOCAL(x, y) [VOKManagedObjectMap mapWithForeignKeyPath:x coreDataKey:CDSELECTOR(y)]
-
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
 #import "VOKManagedObjectMapper.h"
-#import "VOKManagedObject.h"
+#import "NSManagedObject+VOKManagedObjectAdditions.h"
 
 typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
     /// No handling of a failed migration, will likely cause app instability and crashing when a migration fails.
@@ -59,6 +41,13 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
  The main managed object context.
  */
 - (NSManagedObjectContext *)managedObjectContext;
+
+/**
+ *  The managed object model, based on the resource and database.
+ *
+ *  @return The managed object model
+ */
+- (NSManagedObjectModel *)managedObjectModel;
 
 /**
  Set the name of the managed object model and the name of the SQL lite store on disk. Call this first when you setup the core data stack.
@@ -110,7 +99,7 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
  */
 - (NSArray *)importArray:(NSArray *)inputArray
                 forClass:(Class)objectClass
-             withContext:(NSManagedObjectContext*)contextOrNil;
+             withContext:(NSManagedObjectContext *)contextOrNil;
 
 /**
  Deserializes a single NSDictionaries full of strings and updates instances the given object.

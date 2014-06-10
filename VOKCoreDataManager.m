@@ -4,6 +4,7 @@
 //
 
 #import "VOKCoreDataManager.h"
+#import "VOKCoreDataManagerInternalMacros.h"
 
 @interface VOKCoreDataManager () {
     NSManagedObjectContext *_managedObjectContext;
@@ -18,7 +19,6 @@
 //Getters
 - (NSManagedObjectContext *)tempManagedObjectContext;
 - (NSManagedObjectContext *)managedObjectContext;
-- (NSManagedObjectModel *)managedObjectModel;
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator;
 
 //Initializers
@@ -61,7 +61,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 + (VOKCoreDataManager *)sharedInstance
 {
     static dispatch_once_t pred;
-    dispatch_once(&pred,^{
+    dispatch_once(&pred, ^{
         VOK_SharedObject = [[self alloc] init];
         VOK_WritingQueue = [[NSOperationQueue alloc] init];
         [VOK_WritingQueue setMaxConcurrentOperationCount:1];
@@ -88,17 +88,15 @@ static VOKCoreDataManager *VOK_SharedObject;
 
 - (NSManagedObjectContext *)tempManagedObjectContext
 {
-    NSManagedObjectContext *tempManagedObjectContext;
-
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+    NSAssert(coordinator, @"PersistentStoreCoordinator does not exist. This is a big problem.");
+    if (!coordinator) {
+        return nil;
+    }
 
-    if (coordinator) {
-        tempManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSConfinementConcurrencyType];
+    NSManagedObjectContext *tempManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSConfinementConcurrencyType];
         [tempManagedObjectContext setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
         [tempManagedObjectContext setPersistentStoreCoordinator:coordinator];
-    } else {
-        CDLog(@"Coordinator is nil & context is %@", [tempManagedObjectContext description]);
-    }
 
     return tempManagedObjectContext;
 }
@@ -131,21 +129,26 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Initializers
+
 - (void)initManagedObjectModel
 {
     NSURL *modelURL = [[NSBundle bundleForClass:[self class]] URLForResource:self.resource withExtension:@"momd"];
     if (!modelURL) {
         modelURL = [[NSBundle bundleForClass:[self class]] URLForResource:self.resource withExtension:@"mom"];
     }
-    NSAssert(modelURL != nil, @"Managed object model not found.");
+    NSAssert(modelURL, @"Managed object model not found.");
+    if (modelURL) {
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+}
 }
 
 - (void)initPersistentStoreCoordinator
 {
     NSAssert([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue], @"Must be on the main queue when initializing persistant store coordinator");
-    NSDictionary *options = @{NSMigratePersistentStoresAutomaticallyOption: @(YES),
-                              NSInferMappingModelAutomaticallyOption: @(YES)};
+    NSDictionary *options = @{
+                              NSMigratePersistentStoresAutomaticallyOption: @YES,
+                              NSInferMappingModelAutomaticallyOption: @YES,
+                              };
 
     NSError *error;
     _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
@@ -172,14 +175,14 @@ static VOKCoreDataManager *VOK_SharedObject;
 
         if (self.migrationFailureOptions == VOKMigrationFailureOptionWipeRecoveryAndAlert ||
             self.migrationFailureOptions == VOKMigrationFailureOptionWipeRecovery) {
-            CDLog(@"Full database delete and rebuild");
+            VOK_CDLog(@"Full database delete and rebuild");
             [[NSFileManager defaultManager] removeItemAtPath:storeURL.path error:nil];
             if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
                                                            configuration:nil
                                                                      URL:storeURL
                                                                  options:nil
                                                                    error:&error]) {
-                CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
+                VOK_CDLog(@"Unresolved error %@, %@", error, [error userInfo]);
                 abort();
             }
         }
@@ -192,18 +195,20 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
 
     NSAssert(coordinator, @"PersistentStoreCoordinator does not exist. This is a big problem.");
-    if (coordinator) {
+    if (!coordinator) {
+        return;
+    }
         _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [_managedObjectContext setPersistentStoreCoordinator:coordinator];
         [_managedObjectContext setMergePolicy:NSMergeByPropertyStoreTrumpMergePolicy];
     }
-}
 
 #pragma mark - Create and configure
+
 - (NSManagedObject *)managedObjectOfClass:(Class)managedObjectClass inContext:(NSManagedObjectContext *)contextOrNil
 {
     contextOrNil = [self safeContext:contextOrNil];
-    return [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(managedObjectClass) inManagedObjectContext:contextOrNil];
+    return [NSEntityDescription insertNewObjectForEntityForName:[managedObjectClass vok_entityName] inManagedObjectContext:contextOrNil];
 }
 
 - (BOOL)setObjectMapper:(VOKManagedObjectMapper *)objMapper forClass:(Class)objectClass
@@ -216,7 +221,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     return NO;
 }
 
-- (NSArray *)importArray:(NSArray *)inputArray forClass:(Class)objectClass withContext:(NSManagedObjectContext*)contextOrNil;
+- (NSArray *)importArray:(NSArray *)inputArray forClass:(Class)objectClass withContext:(NSManagedObjectContext *)contextOrNil;
 {
     VOKManagedObjectMapper *mapper = [self mapperForClass:objectClass];
 
@@ -236,7 +241,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     
     for (NSDictionary *inputDict in inputArray) {
         if (![inputDict isKindOfClass:[NSDictionary class]]) {
-            CDLog(@"ERROR\nExpecting an NSArray full of NSDictionaries");
+            VOK_CDLog(@"ERROR\nExpecting an NSArray full of NSDictionaries");
             break;
         }
 
@@ -270,6 +275,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Convenient Output
+
 - (NSDictionary *)dictionaryRepresentationOfManagedObject:(NSManagedObject *)object respectKeyPaths:(BOOL)keyPathsEnabled
 {
     VOKManagedObjectMapper *mapper = [self mapperForClass:[object class]];
@@ -281,6 +287,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Count, Fetch, and Delete
+
 - (NSUInteger)countForClass:(Class)managedObjectClass
 {
     return [self countForClass:managedObjectClass forContext:nil];
@@ -299,7 +306,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSError *error;
     NSUInteger count = [contextOrNil countForFetchRequest:fetchRequest error:&error];
     if (error) {
-        CDLog(@"%s Fetch Request Error\n%@",__PRETTY_FUNCTION__ ,[error localizedDescription]);
+        VOK_CDLog(@"%s Fetch Request Error\n%@", __PRETTY_FUNCTION__, [error localizedDescription]);
     }
 
     return count;
@@ -323,7 +330,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSError *error;
     NSArray *results = [contextOrNil executeFetchRequest:fetchRequest error:&error];
     if (error) {
-        CDLog(@"%s Fetch Request Error\n%@",__PRETTY_FUNCTION__ ,[error localizedDescription]);
+        VOK_CDLog(@"%s Fetch Request Error\n%@", __PRETTY_FUNCTION__, [error localizedDescription]);
     }
 
     return results;
@@ -336,7 +343,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSError *error;
 
     if (!objectID) {
-        CDLog(@"No object exists at\n%@", uri);
+        VOK_CDLog(@"No object exists at\n%@", uri);
         return nil;
     }
 
@@ -344,7 +351,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     id returnObject = [contextOrNil existingObjectWithID:objectID error:&error];
 
     if (!returnObject) {
-        CDLog(@"No object exists at\n%@.\n\nError:\n%@", uri, error);
+        VOK_CDLog(@"No object exists at\n%@.\n\nError:\n%@", uri, error);
     }
 
     return returnObject;
@@ -364,7 +371,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSError *error;
     NSArray *results = [contextOrNil executeFetchRequest:fetchRequest error:&error];
     if (error) {
-        CDLog(@"%s Fetch Request Error\n%@",__PRETTY_FUNCTION__ ,[error localizedDescription]);
+        VOK_CDLog(@"%s Fetch Request Error\n%@", __PRETTY_FUNCTION__, [error localizedDescription]);
         return NO;
     }
 
@@ -376,6 +383,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Thread Safety with Main MOC
+
 - (NSManagedObjectContext *)safeContext:(NSManagedObjectContext *)context
 {
     if (!context) {
@@ -390,6 +398,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Context Saving and Merging
+
 - (void)saveMainContext
 {
     if ([NSOperationQueue mainQueue] == [NSOperationQueue currentQueue]) {
@@ -416,7 +425,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 {
     NSError *error;
     if (![context save:&error]) {
-        CDLog(@"Unresolved error %@, %@", error, [error localizedDescription]);
+        VOK_CDLog(@"Unresolved error %@, %@", error, [error localizedDescription]);
     }
 }
 
@@ -458,6 +467,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 }
 
 #pragma mark - Convenience Methods
+
 + (void)writeToTemporaryContext:(void (^)(NSManagedObjectContext *tempContext))writeBlock
                      completion:(void (^)(void))completion
 {
@@ -477,7 +487,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 
 - (NSFetchRequest *)fetchRequestWithClass:(Class)managedObjectClass predicate:(NSPredicate *)predicate
 {
-    NSString *entityName = NSStringFromClass(managedObjectClass);
+    NSString *entityName = [managedObjectClass vok_entityName];
     NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:entityName];
     [fetchRequest setPredicate:predicate];
     return fetchRequest;
@@ -485,7 +495,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 
 - (VOKManagedObjectMapper *)mapperForClass:(Class)objectClass
 {
-    VOKManagedObjectMapper * mapper = self.mapperCollection[NSStringFromClass(objectClass)];
+    VOKManagedObjectMapper *mapper = self.mapperCollection[NSStringFromClass(objectClass)];
     while (!mapper && objectClass) {
         objectClass = [objectClass superclass];
         mapper = self.mapperCollection[NSStringFromClass(objectClass)];
@@ -507,7 +517,7 @@ static VOKCoreDataManager *VOK_SharedObject;
 {
     NSArray *stores = [[self persistentStoreCoordinator] persistentStores];
 
-    for(NSPersistentStore *store in stores) {
+    for (NSPersistentStore *store in stores) {
         [[self persistentStoreCoordinator] removePersistentStore:store error:nil];
         if (self.databaseFilename) {
             [[NSFileManager defaultManager] removeItemAtPath:store.URL.path error:nil];            
