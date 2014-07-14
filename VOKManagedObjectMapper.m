@@ -44,6 +44,7 @@
     self = [super init];
     if (self) {
         _overwriteObjectsWithServerChanges = YES;
+        _ignoreNullValueOverwrites = NO;
     }
     return self;
 }
@@ -168,7 +169,12 @@
         inputObject = [self checkNumber:inputObject withNumberFormatter:aMap.numberFormatter];
         inputObject = [self checkClass:inputObject managedObject:object key:aMap.coreDataKey];
         inputObject = [self checkNull:inputObject];
-        [object vok_safeSetValue:inputObject forKey:aMap.coreDataKey];
+
+        if (!self.ignoreNullValueOverwrites) {
+            [object vok_safeSetValue:inputObject forKey:aMap.coreDataKey];
+        } else if (inputObject) {
+            [object vok_safeSetValue:inputObject forKey:aMap.coreDataKey];
+        }
     }
 }
 
