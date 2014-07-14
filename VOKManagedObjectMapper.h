@@ -16,6 +16,8 @@
 @property (readonly) NSString *foreignUniqueComparisonKey;
 /// If set to NO changes are discarded if a local object exists with the same unique comparison key. Defaults to YES.
 @property BOOL overwriteObjectsWithServerChanges;
+/// If set to YES remote null/nil values are ignored when updating. Defaults to NO.
+@property BOOL ignoreNullValueOverwrites;
 
 /**
  Creates a new map.
