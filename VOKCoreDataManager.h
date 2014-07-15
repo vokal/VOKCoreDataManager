@@ -86,6 +86,16 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
  */
 - (BOOL)setObjectMapper:(VOKManagedObjectMapper *)objMap
                forClass:(Class)objectClass;
+
+/**
+ *  The VOKManagedObjectMapper for the particular class.
+ *
+ *  @param objectClass The NSManagedObject subclass that has a mapping associated with it.
+ *
+ *  @return The VOKManagedObjectMapper associated with the class.
+ */
+- (VOKManagedObjectMapper *)mapperForClass:(Class)objectClass;
+
 /**
  Deserializes the NSDictionaries full of strings and creates/updates instances in the given context.
  @param inputArray

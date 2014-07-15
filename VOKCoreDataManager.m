@@ -36,7 +36,6 @@
 
 //Convenience Methods
 - (NSFetchRequest *)fetchRequestWithClass:(Class)managedObjectClass predicate:(NSPredicate *)predicate;
-- (VOKManagedObjectMapper *)mapperForClass:(Class)objectClass;
 - (NSURL *)applicationLibraryDirectory;
 
 @end
