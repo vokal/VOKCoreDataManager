@@ -241,7 +241,11 @@ NSString *const period = @".";
 //using DEFAULT mapper, if the input string COULD be made a number it WILL be made a number.
         inputObject = [self checkClass:inputObject managedObject:object key:key];
         inputObject = [self checkNull:inputObject];
-        [object vok_safeSetValue:inputObject forKey:key];
+        if (!self.ignoreNullValueOverwrites) {
+            [object vok_safeSetValue:inputObject forKey:key];
+        } else if (inputObject) {
+            [object vok_safeSetValue:inputObject forKey:key];
+        }
     }];
 }
 
