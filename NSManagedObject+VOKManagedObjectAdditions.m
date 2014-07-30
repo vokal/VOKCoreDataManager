@@ -105,7 +105,7 @@
 
 + (NSFetchRequest *)vok_fetchRequestWithPredicate:(NSPredicate *)predicate
 {
-    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass([self class])];
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:[self vok_entityName]];
     [fetchRequest setPredicate:predicate];
     return fetchRequest;
 }
