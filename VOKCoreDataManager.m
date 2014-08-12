@@ -45,6 +45,7 @@
 - (void)setInformationFromDictionary:(NSDictionary *)inputDict forManagedObject:(NSManagedObject *)object;
 - (NSDictionary *)dictionaryRepresentationOfManagedObject:(NSManagedObject *)object;
 - (NSDictionary *)hierarchicalDictionaryRepresentationOfManagedObject:(NSManagedObject *)object;
+
 @end
 
 @implementation VOKCoreDataManager
@@ -138,7 +139,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSAssert(modelURL, @"Managed object model not found.");
     if (modelURL) {
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
-}
+    }
 }
 
 - (void)initPersistentStoreCoordinator

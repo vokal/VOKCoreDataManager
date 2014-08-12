@@ -3,15 +3,19 @@
 //  VOKCoreData
 //
 
+#import <objc/runtime.h>
+
 #import "VOKManagedObjectMapper.h"
 #import "VOKCoreDataManager.h"
 #import "VOKCoreDataManagerInternalMacros.h"
 
 @interface VOKManagedObjectMap (VOKdefaultFormatters)
 + (NSDateFormatter *)vok_defaultDateFormatter;
+
 @end
 
 @interface VOKManagedObjectDefaultMapper : VOKManagedObjectMapper
+
 @end
 
 @interface VOKManagedObjectMapper ()
@@ -22,6 +26,8 @@
 - (id)checkString:(id)outputObject withDateFormatter:(NSDateFormatter *)dateFormatter;
 - (id)checkClass:(id)inputObject managedObject:(NSManagedObject *)object key:(NSString *)key;
 - (Class)expectedClassForObject:(NSManagedObject *)object andKey:(id)key;
+- (NSString *)propertyTypeFromAttributeString:(NSString *)attributeString;
+
 @end
 
 @implementation VOKManagedObjectMapper
@@ -152,7 +158,35 @@
 {
     NSDictionary *attributes = [[object entity] attributesByName];
     NSAttributeDescription *attributeDescription = [attributes valueForKey:key];
-    return NSClassFromString([attributeDescription attributeValueClassName]);
+    NSString *className = [attributeDescription attributeValueClassName];
+    if (!className) {
+        const char *className = [[object.entity managedObjectClassName] cStringUsingEncoding:NSUTF8StringEncoding];
+        const char *propertyName = [key cStringUsingEncoding:NSUTF8StringEncoding];
+
+        Class managedObjectClass = objc_getClass(className);
+        objc_property_t prop = class_getProperty(managedObjectClass, propertyName);
+
+        NSString *attributeString = [NSString stringWithCString:property_getAttributes(prop) encoding:NSUTF8StringEncoding];
+        const char *destinationClassName = [[self propertyTypeFromAttributeString:attributeString] cStringUsingEncoding:NSUTF8StringEncoding];
+
+        return objc_getClass(destinationClassName);
+    }
+    return NSClassFromString(className);
+}
+
+- (NSString *)propertyTypeFromAttributeString:(NSString *)attributeString
+{
+    NSString *type = [NSString string];
+    NSScanner *typeScanner = [NSScanner scannerWithString:attributeString];
+    [typeScanner scanUpToCharactersFromSet:[NSCharacterSet characterSetWithCharactersInString:@"@"] intoString:NULL];
+
+    if ([typeScanner isAtEnd]) {
+        return @"NULL";
+    }
+
+    [typeScanner scanCharactersFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\"@"] intoString:NULL];
+    [typeScanner scanUpToCharactersFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\""] intoString:&type];
+    return type;
 }
 
 @end
