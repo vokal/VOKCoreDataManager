@@ -9,6 +9,7 @@
 @optional
 - (void)fetchResultsDataSourceSelectedObject:(NSManagedObject *)object;
 - (void)fetchResultsDataSourceHasResults:(BOOL)hasResults;
+
 @end
 
 @interface VOKFetchedResultsDataSource : NSObject <NSFetchedResultsControllerDelegate, UITableViewDelegate, UITableViewDataSource> {

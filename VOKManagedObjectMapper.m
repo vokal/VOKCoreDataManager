@@ -11,9 +11,11 @@
 
 @interface VOKManagedObjectMap (VOKdefaultFormatters)
 + (NSDateFormatter *)vok_defaultDateFormatter;
+
 @end
 
 @interface VOKManagedObjectDefaultMapper : VOKManagedObjectMapper
+
 @end
 
 @interface VOKManagedObjectMapper ()
@@ -25,6 +27,7 @@
 - (id)checkClass:(id)inputObject managedObject:(NSManagedObject *)object key:(NSString *)key;
 - (Class)expectedClassForObject:(NSManagedObject *)object andKey:(id)key;
 - (NSString *)propertyTypeFromAttributeString:(NSString *)attributeString;
+
 @end
 
 @implementation VOKManagedObjectMapper
