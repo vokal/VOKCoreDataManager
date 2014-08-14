@@ -235,7 +235,7 @@
 - (void)initFetchedResultsController
 {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:NSStringFromClass(_managedObjectClass)
+    NSEntityDescription *entity = [NSEntityDescription entityForName:[_managedObjectClass vok_entityName]
                                               inManagedObjectContext:_managedObjectContext];
     [fetchRequest setEntity:entity];
     
