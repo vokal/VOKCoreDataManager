@@ -139,6 +139,13 @@
     return cell;
 }
 
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self.delegate respondsToSelector:@selector(fetchResultsDataSourceSelectedObject:)]) {
+        [self.delegate fetchResultsDataSourceSelectedObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
+    }
+}
+
 #pragma mark - Fetched results controller
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id <NSFetchedResultsSectionInfo>)sectionInfo
