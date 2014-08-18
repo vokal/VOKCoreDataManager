@@ -22,11 +22,11 @@
 @property (weak) id <VOKFetchedResultsDataSourceDelegate> delegate;
 
 //these are exposed to handle reconfiguration of the protected _fetchedResultsController, when they change
-@property (nonatomic, assign) NSInteger batchSize;
-@property (nonatomic, assign) NSInteger fetchLimit;
+@property (assign, nonatomic) NSInteger batchSize;
+@property (assign, nonatomic) NSInteger fetchLimit;
 
-@property (nonatomic, weak) NSPredicate *predicate;
-@property (nonatomic, weak) NSArray *sortDescriptors;
+@property (weak, nonatomic) NSPredicate *predicate;
+@property (weak, nonatomic) NSArray *sortDescriptors;
 
 //whether to deselect the selected cell of the table view
 //after sending the selected object to the delegate

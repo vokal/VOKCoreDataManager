@@ -37,4 +37,6 @@
  */
 + (instancetype)defaultMapper;
 
+- (id)objectForKeyedSubscript:(id)key;
+
 @end

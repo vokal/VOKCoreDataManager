@@ -67,6 +67,18 @@
     }
 }
 
+- (id)objectForKeyedSubscript:(NSString *)key
+{
+    NSString __block * returnString = nil;
+    [self.mapsArray enumerateObjectsUsingBlock:^(VOKManagedObjectMap *map, NSUInteger idx, BOOL *stop) {
+        if ([map.coreDataKey isEqualToString:key]) {
+            returnString = map.inputKeyPath;
+            *stop = YES;
+        }
+    }];
+    return returnString;
+}
+
 - (void)updateForeignComparisonKey
 {
     for (VOKManagedObjectMap *aMap in self.mapsArray) {
