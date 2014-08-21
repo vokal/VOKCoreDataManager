@@ -445,6 +445,15 @@ static VOKCoreDataManager *VOK_SharedObject;
 
 - (void)tempContextSaved:(NSNotification *)notification
 {
+    // Solved issue with NSFetchedResultsController ignoring changes
+    // merged from different managed object contexts by touching
+    // willAccessValueForKey: on the updated objects.
+    //http://stackoverflow.com/questions/3923826/nsfetchedresultscontroller-with-predicate-ignores-changes-merged-from-different
+    
+    for (NSManagedObject *object in [[notification userInfo] objectForKey:NSUpdatedObjectsKey]) {
+        [[[self managedObjectContext] objectWithID:[object objectID]] willAccessValueForKey:nil];
+    }
+    
     if ([NSOperationQueue mainQueue] == [NSOperationQueue currentQueue]) {
         [[self managedObjectContext] mergeChangesFromContextDidSaveNotification:notification];
     } else {
