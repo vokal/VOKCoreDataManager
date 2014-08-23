@@ -31,81 +31,65 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
  @code
  [[VOKCoreDataManager sharedInstance] setResource:@"VICoreDataModel" database:@"VICoreDataModel.sqlite"];
  @endcode
- @return The shared core data manager.
+ @return    The shared core data manager.
  */
 + (VOKCoreDataManager *)sharedInstance;
 
 /**
  The primary managed object context. Only for use on the main queue.
- @return 
- The main managed object context.
+ @return    The main managed object context.
  */
 - (NSManagedObjectContext *)managedObjectContext;
 
 /**
- *  The managed object model, based on the resource and database.
- *
- *  @return The managed object model
+ The managed object model, based on the resource and database.
+ @return    The managed object model
  */
 - (NSManagedObjectModel *)managedObjectModel;
 
 /**
  Set the name of the managed object model and the name of the SQL lite store on disk. Call this first when you setup the core data stack.
- @param resource
- The filename of the mom or momd file in your project. If nil the first model found in the main bundle will be used.
- @param database
- The filename of the SQLite store in your application. A nil database name will create an in-memory store.
+ @param resource    The filename of the mom or momd file in your project. If nil the first model found in the main bundle will be used.
+ @param database    The filename of the SQLite store in your application. A nil database name will create an in-memory store.
  */
 - (void)setResource:(NSString *)resource
            database:(NSString *)database;
 
 /**
- *  In case of a migration failure, these options allow possible recovery and notification
+ In case of a migration failure, these options allow possible recovery and notification
  */
 @property VOKMigrationFailureOption migrationFailureOptions;
 
 /**
  Create a new instance of a given NSManagedObject subclass.
- @param managedObjectClass
- The class of the object to return.
- @param contextOrNil
- The managed object context in which to insert the new object. A nil context will use the main context.
- @return 
- A new instance of the requested managed object subclass.
+ @param managedObjectClass  The class of the object to return.
+ @param contextOrNil        The managed object context in which to insert the new object. A nil context will use the main context.
+ @return                    A new instance of the requested managed object subclass.
  */
 - (NSManagedObject *)managedObjectOfClass:(Class)managedObjectClass
                                 inContext:(NSManagedObjectContext *)contextOrNil;
 /**
  Set the object mapper for a given NSManagedObject subclass
- @param objMap
- The object mapper for importing data.
- @param objectClass
- Specifies the class to instantiate or fetch when importing data.
- @return
- YES if the mapper and class are set. NO if the relationship could not be set.
+ @param objMap          The object mapper for importing data.
+ @param objectClass     Specifies the class to instantiate or fetch when importing data.
+ @return                YES if the mapper and class are set. NO if the relationship could not be set.
  */
 - (BOOL)setObjectMapper:(VOKManagedObjectMapper *)objMap
                forClass:(Class)objectClass;
 
 /**
- *  The VOKManagedObjectMapper for the particular class.
- *
- *  @param objectClass The NSManagedObject subclass that has a mapping associated with it.
- *
- *  @return The VOKManagedObjectMapper associated with the class.
+ The VOKManagedObjectMapper for the particular class.
+ @param objectClass     The NSManagedObject subclass that has a mapping associated with it.
+ @return                The VOKManagedObjectMapper associated with the class.
  */
 - (VOKManagedObjectMapper *)mapperForClass:(Class)objectClass;
 
 /**
  Deserializes the NSDictionaries full of strings and creates/updates instances in the given context.
- @param inputArray
- An NSArray of NSDictionaries with data to be deserialized and imported into the managed object context.
- @param objectClass
- Specifies the class to instantiate or fetch when importing data.
- @param contextOrNil
- The managed object context in which to insert or fetch instances of the given class. A nil context will use the main context.
- @return
- An NSArray of instances of the given class. As subclasses of NSManagedObject they are not threadsafe.
+ @param inputArray      An NSArray of NSDictionaries with data to be deserialized and imported into the managed object context.
+ @param objectClass     Specifies the class to instantiate or fetch when importing data.
+ @param contextOrNil    The managed object context in which to insert or fetch instances of the given class. A nil context will use the main context.
+ @return                An NSArray of instances of the given class. As subclasses of NSManagedObject they are not threadsafe.
  */
 - (NSArray *)importArray:(NSArray *)inputArray
                 forClass:(Class)objectClass
@@ -113,44 +97,34 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
 
 /**
  Deserializes a single NSDictionaries full of strings and updates instances the given object.
- @param inputDict
- An NSDictionary with data to be deserialized.
- @param object
- The object to update.
+ @param inputDict   An NSDictionary with data to be deserialized.
+ @param object  The object to update.
  */
 - (void)setInformationFromDictionary:(NSDictionary *)inputDict
                     forManagedObject:(NSManagedObject *)object;
 
 /**
  Serializes a managed object.
- @param object
- Specifies the class to instantiate or fetch when importing data.
- @param keyPathsEnabled
- If enabled the dictionary will include nexted dictionaries, following keys paths. If disabled the resulting dictionary will be flat.
- @return
- An NSDictionary representation of the given object using the mapper associated with the object's class.
+ @param object              Specifies the class to instantiate or fetch when importing data.
+ @param keyPathsEnabled     If enabled the dictionary will include nexted dictionaries, following keys paths. If disabled the resulting dictionary will be flat.
+ @return                    An NSDictionary representation of the given object using the mapper associated with the object's class.
  */
 - (NSDictionary *)dictionaryRepresentationOfManagedObject:(NSManagedObject *)object respectKeyPaths:(BOOL)keyPathsEnabled;
 
 /**
  Counts every instance of a given class using the main managed object context. Includes subentities.
  NOT threadsafe! Always use a temp context if you are NOT on the main queue.
- @param managedObjectClass
- The class to count.
- @return
- Zero or greater count of the instances of the class.
+ @param managedObjectClass      The class to count.
+ @return                        Zero or greater count of the instances of the class.
  */
 - (NSUInteger)countForClass:(Class)managedObjectClass;
 
 /**
  Counts every instance of a given class using the given managed object context. Includes subentities.
  NOT threadsafe! Always use a temp context if you are NOT on the main queue.
- @param managedObjectClass
- The class to count.
- @param contextOrNil
- The managed object context in which count instances of the given class. A nil context will use the main context.
- @return
- Zero or greater count of the instances of the class.
+ @param managedObjectClass      The class to count.
+ @param contextOrNil            The managed object context in which count instances of the given class. A nil context will use the main context.
+ @return                        Zero or greater count of the instances of the class.
  */
 - (NSUInteger)countForClass:(Class)managedObjectClass
                  forContext:(NSManagedObjectContext *)contextOrNil;
@@ -158,14 +132,10 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
 /**
  Counts every instance of a given class that matches the predicate using the given managed object context. Includes subentities.
  NOT threadsafe! Always use a temp context if you are NOT on the main queue.
- @param managedObjectClass
- The class to count.
- @param predicate
- The predicate limit the count.
- @param contextOrNil
- The managed object context in which count instances of the given class. A nil context will use the main context.
- @return
- Zero or greater count of the instances of the class.
+ @param managedObjectClass  The class to count.
+ @param predicate           The predicate limit the count.
+ @param contextOrNil        The managed object context in which count instances of the given class. A nil context will use the main context.
+ @return                    Zero or greater count of the instances of the class.
  */
 - (NSUInteger)countForClass:(Class)managedObjectClass
               withPredicate:(NSPredicate *)predicate
@@ -174,22 +144,17 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
 /**
  Fetches every instance of a given class using the main managed object context. Includes subentities.
  NOT threadsafe! Always use a temp context if you are NOT on the main queue.
- @param managedObjectClass
- The class to fetch
- @return
- An NSArray of managed object subclasses. Not threadsafe.
+ @param managedObjectClass  The class to fetch
+ @return                    An NSArray of managed object subclasses. Not threadsafe.
  */
 - (NSArray *)arrayForClass:(Class)managedObjectClass;
 
 /**
  Fetches every instance of a given class using the given managed object context. Includes subentities.
  NOT threadsafe! Always use a temp context if you are NOT on the main queue.
- @param managedObjectClass
- The class to fetch.
- @param contextOrNil
- The managed object context in which fetch instances of the given class. A nil context will use the main context.
- @return
- An NSArray of managed object subclasses. Not threadsafe.
+ @param managedObjectClass  The class to fetch.
+ @param contextOrNil        The managed object context in which fetch instances of the given class. A nil context will use the main context.
+ @return                    An NSArray of managed object subclasses. Not threadsafe.
  */
 - (NSArray *)arrayForClass:(Class)managedObjectClass
                 forContext:(NSManagedObjectContext *)contextOrNil;
@@ -197,14 +162,10 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
 /**
  Fetches every instance of a given class that matches the predicate using the given managed object context. Includes subentities.
  NOT threadsafe! Always use a temp context if you are NOT on the main queue.
- @param managedObjectClass
- The class to fetch.
- @param predicate
- The predicate limit the fetch.
- @param contextOrNil
- The managed object context in which fetch instances of the given class. A nil context will use the main context.
- @return
- An NSArray of managed object subclasses. Not threadsafe.
+ @param managedObjectClass      The class to fetch.
+ @param predicate               The predicate limit the fetch.
+ @param contextOrNil            The managed object context in which fetch instances of the given class. A nil context will use the main context.
+ @return                        An NSArray of managed object subclasses. Not threadsafe.
  */
 - (NSArray *)arrayForClass:(Class)managedObjectClass
              withPredicate:(NSPredicate *)predicate
@@ -213,30 +174,23 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
 /**
  Finds an object for a given NSManagedObjectID URI Representation. This method relies on existingObjectWithID:error:.
  A very malformed URI will cause managedObjectIDForURIRepresentation: to throw an exception. All other known errors are handled by logging and returning nil.
- @param uri
- URIRepresetion of an NSManagedObjectId
- @param contextOrNil
- The managed object context in which fetch instances of the given class. A nil context will use the main context.
- @return 
- The object matching the uri passed in. If the object doesn't exist nil is returned.
+ @param uri             URIRepresetion of an NSManagedObjectId
+ @param contextOrNil    The managed object context in which fetch instances of the given class. A nil context will use the main context.
+ @return                The object matching the uri passed in. If the object doesn't exist nil is returned.
  */
 - (id)existingObjectAtURI:(NSURL *)uri forManagedObjectContext:(NSManagedObjectContext *)contextOrNil;
 
 /**
  Deletes a given object in its current context. Uses the object's context. As always, remember to keep NSManagedObjects on one queue.
- @param object
- The object to delete.
+ @param object      The object to delete.
  */
 - (void)deleteObject:(NSManagedObject *)object;
 
 /**
  Deletes all instances of a class in the given context.
- @param managedObjectClass
- Instances of this class will all be deleted from the given context.
- @param contextOrNil
- The managed object context in which delete instances of the given class. A nil context will use the main context.
- @return
- YES if all objects were successfully deleted. NO if the attemp to delete was unsuccessful.
+ @param managedObjectClass      Instances of this class will all be deleted from the given context.
+ @param contextOrNil            The managed object context in which delete instances of the given class. A nil context will use the main context.
+ @return                        YES if all objects were successfully deleted. NO if the attemp to delete was unsuccessful.
  */
 - (BOOL)deleteAllObjectsOfClass:(Class)managedObjectClass
                         context:(NSManagedObjectContext *)contextOrNil;
@@ -260,8 +214,7 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
  [self loadDataWithContext:backgroundContext]; //do some data loading
  [[VOKCoreDataManager sharedInstance] saveAndMergeWithMainContext:backgroundContext];
  @endcode
- @return
- A managed object context with the same persistant store coordinator as tha main context, but otherwise no relationship.
+ @return        A managed object context with the same persistant store coordinator as tha main context, but otherwise no relationship.
  */
 - (NSManagedObjectContext *)temporaryContext;
 
@@ -276,8 +229,7 @@ typedef NS_ENUM (NSInteger, VOKMigrationFailureOption) {
 /**
  Saves any temporary managed object context and merges those changes with the main managed object context in a thread-safe way.
  This method is safe to call from any queue.
- @param context
- The termporary context to save. Do not use this method to save the main context.
+ @param context     The termporary context to save. Do not use this method to save the main context.
  */
 - (void)saveAndMergeWithMainContext:(NSManagedObjectContext *)context;
 

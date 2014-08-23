@@ -12,9 +12,9 @@
     NSPersistentStoreCoordinator *_persistentStoreCoordinator;
 }
 
-@property (copy) NSString *resource;
-@property (copy) NSString *databaseFilename;
-@property NSMutableDictionary *mapperCollection;
+@property (nonatomic, copy) NSString *resource;
+@property (nonatomic, copy) NSString *databaseFilename;
+@property (nonatomic, strong) NSMutableDictionary *mapperCollection;
 
 //Getters
 - (NSManagedObjectContext *)tempManagedObjectContext;

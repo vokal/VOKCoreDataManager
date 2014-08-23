@@ -19,7 +19,7 @@
 @end
 
 @interface VOKManagedObjectMapper ()
-@property (nonatomic) NSArray *mapsArray;
+@property (nonatomic, strong) NSArray *mapsArray;
 - (void)updateForeignComparisonKey;
 - (id)checkNull:(id)inputObject;
 - (id)checkDate:(id)inputObject withDateFormatter:(NSDateFormatter *)dateFormatter;
@@ -57,7 +57,7 @@
 
 - (void)setUniqueComparisonKey:(NSString *)uniqueComparisonKey
 {
-    _uniqueComparisonKey = uniqueComparisonKey;
+    _uniqueComparisonKey = [uniqueComparisonKey copy];
     _foreignUniqueComparisonKey = nil;
     if (uniqueComparisonKey) {
         [self updateForeignComparisonKey];
@@ -210,6 +210,9 @@
             [object vok_safeSetValue:inputObject forKey:aMap.coreDataKey];
         }
     }
+    if (self.importCompletionBlock) {
+        self.importCompletionBlock(inputDict, object);
+    }
 }
 
 - (NSDictionary *)dictionaryRepresentationOfManagedObject:(NSManagedObject *)object
@@ -223,11 +226,14 @@
             outputDict[aMap.inputKeyPath] = outputObject;
         }
     }
+    if (self.exportCompletionBlock) {
+        self.exportCompletionBlock(outputDict, object);
+    }
 
     return [outputDict copy];
 }
 
-NSString *const period = @".";
+static NSString *const period = @".";
 - (NSDictionary *)hierarchicalDictionaryRepresentationOfManagedObject:(NSManagedObject *)object
 {
     NSMutableDictionary *outputDict = [NSMutableDictionary new];
@@ -241,6 +247,9 @@ NSString *const period = @".";
         if (outputObject) {
             [outputDict setValue:outputObject forKeyPath:aMap.inputKeyPath];
         }
+    }
+    if (self.exportCompletionBlock) {
+        self.exportCompletionBlock(outputDict, object);
     }
 
     return [outputDict copy];
@@ -281,6 +290,9 @@ NSString *const period = @".";
             [object vok_safeSetValue:inputObject forKey:key];
         }
     }];
+    if (self.importCompletionBlock) {
+        self.importCompletionBlock(inputDict, object);
+    }
 }
 
 - (NSDictionary *)dictionaryRepresentationOfManagedObject:(NSManagedObject *)object
@@ -294,7 +306,10 @@ NSString *const period = @".";
             outputDict[key] = outputObject;
         }
     }];
-    
+    if (self.exportCompletionBlock) {
+        self.exportCompletionBlock(outputDict, object);
+    }
+
     return [outputDict copy];
 }
 
