@@ -17,14 +17,14 @@
 /**
  Creates a dictionary based on the set mapping. This should round-trip data from dictionaries to core data and back.
  This method does not respect keyPaths. The dictionary is flat.
- @return    An NSDictioary matching the original input dictionary.
+ @return    An NSDictionary matching the original input dictionary.
  */
 - (NSDictionary *)vok_dictionaryRepresentation;
 
 /**
  Creates a dictionary based on the set mapping. This should round-trip data from dictionaries to core data and back.
  This method respects keyPaths.
- @return    An NSDictioary matching the original input dictionary.
+ @return    An NSDictionary matching the original input dictionary.
  */
 - (NSDictionary *)vok_dictionaryRepresentationRespectingKeyPaths;
 
