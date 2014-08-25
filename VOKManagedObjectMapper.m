@@ -86,7 +86,7 @@
 
 - (id)objectForKeyedSubscript:(NSString *)key
 {
-    NSString __block * returnString = nil;
+    NSString *returnString = nil;
     for (VOKManagedObjectMap *map in self.mapsArray) {
         if ([map.coreDataKey isEqualToString:key]) {
             returnString = map.inputKeyPath;
