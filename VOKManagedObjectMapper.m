@@ -76,12 +76,12 @@
 - (id)objectForKeyedSubscript:(NSString *)key
 {
     NSString __block * returnString = nil;
-    [self.mapsArray enumerateObjectsUsingBlock:^(VOKManagedObjectMap *map, NSUInteger idx, BOOL *stop) {
+    for (VOKManagedObjectMap *map in self.mapsArray) {
         if ([map.coreDataKey isEqualToString:key]) {
             returnString = map.inputKeyPath;
-            *stop = YES;
+            break;
         }
-    }];
+    }
     return returnString;
 }
 
