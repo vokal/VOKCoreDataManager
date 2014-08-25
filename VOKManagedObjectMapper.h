@@ -15,9 +15,9 @@ typedef void(^VOKPostExportBlock)(NSMutableDictionary *outputDict, NSManagedObje
 @interface VOKManagedObjectMapper : NSObject
 
 /// Used to identify and update NSManagedObjects. Like a "primary key" in databases.
-@property (readonly) NSString *uniqueComparisonKey;
+@property (nonatomic, copy) NSString *uniqueComparisonKey;
 /// Used internally to filter input data. Updates automatically to match the uniqueComparisonKey.
-@property (readonly) NSString *foreignUniqueComparisonKey;
+@property (nonatomic, copy) NSString *foreignUniqueComparisonKey;
 /// If set to NO changes are discarded if a local object exists with the same unique comparison key. Defaults to YES.
 @property BOOL overwriteObjectsWithServerChanges;
 /// If set to YES remote null/nil values are ignored when updating. Defaults to NO.
@@ -42,11 +42,9 @@ typedef void(^VOKPostExportBlock)(NSMutableDictionary *outputDict, NSManagedObje
 + (instancetype)defaultMapper;
 
 /**
- *  This override of objectForKeyedSubscript allows you to get the network keypath for the given core data key.
- *
- *  @param key The core data key.
- *
- *  @return The network equivalent keypath as a string.
+ This override of objectForKeyedSubscript returns the foreign key for a local core data key.
+ @param key The core data key.
+ @return The foreign keypath as a string.
  */
 - (id)objectForKeyedSubscript:(id)key;
 

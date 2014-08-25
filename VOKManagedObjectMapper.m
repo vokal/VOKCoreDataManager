@@ -55,12 +55,23 @@
     return self;
 }
 
+#pragma mark - Setters and Getters
+
 - (void)setUniqueComparisonKey:(NSString *)uniqueComparisonKey
 {
     _uniqueComparisonKey = [uniqueComparisonKey copy];
     _foreignUniqueComparisonKey = nil;
     if (uniqueComparisonKey) {
         [self updateForeignComparisonKey];
+    }
+}
+
+- (void)updateForeignComparisonKey
+{
+    for (VOKManagedObjectMap *aMap in self.mapsArray) {
+        if ([aMap.coreDataKey isEqualToString:self.uniqueComparisonKey]) {
+            _foreignUniqueComparisonKey = aMap.inputKeyPath;
+        }
     }
 }
 
@@ -83,15 +94,6 @@
         }
     }
     return returnString;
-}
-
-- (void)updateForeignComparisonKey
-{
-    for (VOKManagedObjectMap *aMap in self.mapsArray) {
-        if ([aMap.coreDataKey isEqualToString:self.uniqueComparisonKey]) {
-            _foreignUniqueComparisonKey = aMap.inputKeyPath;
-        }
-    }
 }
 
 #pragma mark - Description
