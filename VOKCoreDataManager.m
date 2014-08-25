@@ -12,9 +12,9 @@
     NSPersistentStoreCoordinator *_persistentStoreCoordinator;
 }
 
-@property (copy) NSString *resource;
-@property (copy) NSString *databaseFilename;
-@property NSMutableDictionary *mapperCollection;
+@property (nonatomic, copy) NSString *resource;
+@property (nonatomic, copy) NSString *databaseFilename;
+@property (nonatomic, strong) NSMutableDictionary *mapperCollection;
 
 //Getters
 - (NSManagedObjectContext *)tempManagedObjectContext;
@@ -45,6 +45,7 @@
 - (void)setInformationFromDictionary:(NSDictionary *)inputDict forManagedObject:(NSManagedObject *)object;
 - (NSDictionary *)dictionaryRepresentationOfManagedObject:(NSManagedObject *)object;
 - (NSDictionary *)hierarchicalDictionaryRepresentationOfManagedObject:(NSManagedObject *)object;
+
 @end
 
 @implementation VOKCoreDataManager
@@ -138,7 +139,7 @@ static VOKCoreDataManager *VOK_SharedObject;
     NSAssert(modelURL, @"Managed object model not found.");
     if (modelURL) {
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
-}
+    }
 }
 
 - (void)initPersistentStoreCoordinator
@@ -444,6 +445,15 @@ static VOKCoreDataManager *VOK_SharedObject;
 
 - (void)tempContextSaved:(NSNotification *)notification
 {
+    // Solved issue with NSFetchedResultsController ignoring changes
+    // merged from different managed object contexts by touching
+    // willAccessValueForKey: on the updated objects.
+    //http://stackoverflow.com/questions/3923826/nsfetchedresultscontroller-with-predicate-ignores-changes-merged-from-different
+    
+    for (NSManagedObject *object in [[notification userInfo] objectForKey:NSUpdatedObjectsKey]) {
+        [[[self managedObjectContext] objectWithID:[object objectID]] willAccessValueForKey:nil];
+    }
+    
     if ([NSOperationQueue mainQueue] == [NSOperationQueue currentQueue]) {
         [[self managedObjectContext] mergeChangesFromContextDidSaveNotification:notification];
     } else {

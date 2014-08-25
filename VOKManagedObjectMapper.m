@@ -3,25 +3,31 @@
 //  VOKCoreData
 //
 
+#import <objc/runtime.h>
+
 #import "VOKManagedObjectMapper.h"
 #import "VOKCoreDataManager.h"
 #import "VOKCoreDataManagerInternalMacros.h"
 
 @interface VOKManagedObjectMap (VOKdefaultFormatters)
 + (NSDateFormatter *)vok_defaultDateFormatter;
+
 @end
 
 @interface VOKManagedObjectDefaultMapper : VOKManagedObjectMapper
+
 @end
 
 @interface VOKManagedObjectMapper ()
-@property (nonatomic) NSArray *mapsArray;
+@property (nonatomic, strong) NSArray *mapsArray;
 - (void)updateForeignComparisonKey;
 - (id)checkNull:(id)inputObject;
 - (id)checkDate:(id)inputObject withDateFormatter:(NSDateFormatter *)dateFormatter;
 - (id)checkString:(id)outputObject withDateFormatter:(NSDateFormatter *)dateFormatter;
 - (id)checkClass:(id)inputObject managedObject:(NSManagedObject *)object key:(NSString *)key;
 - (Class)expectedClassForObject:(NSManagedObject *)object andKey:(id)key;
+- (NSString *)propertyTypeFromAttributeString:(NSString *)attributeString;
+
 @end
 
 @implementation VOKManagedObjectMapper
@@ -51,7 +57,7 @@
 
 - (void)setUniqueComparisonKey:(NSString *)uniqueComparisonKey
 {
-    _uniqueComparisonKey = uniqueComparisonKey;
+    _uniqueComparisonKey = [uniqueComparisonKey copy];
     _foreignUniqueComparisonKey = nil;
     if (uniqueComparisonKey) {
         [self updateForeignComparisonKey];
@@ -164,7 +170,35 @@
 {
     NSDictionary *attributes = [[object entity] attributesByName];
     NSAttributeDescription *attributeDescription = [attributes valueForKey:key];
-    return NSClassFromString([attributeDescription attributeValueClassName]);
+    NSString *className = [attributeDescription attributeValueClassName];
+    if (!className) {
+        const char *className = [[object.entity managedObjectClassName] cStringUsingEncoding:NSUTF8StringEncoding];
+        const char *propertyName = [key cStringUsingEncoding:NSUTF8StringEncoding];
+
+        Class managedObjectClass = objc_getClass(className);
+        objc_property_t prop = class_getProperty(managedObjectClass, propertyName);
+
+        NSString *attributeString = [NSString stringWithCString:property_getAttributes(prop) encoding:NSUTF8StringEncoding];
+        const char *destinationClassName = [[self propertyTypeFromAttributeString:attributeString] cStringUsingEncoding:NSUTF8StringEncoding];
+
+        return objc_getClass(destinationClassName);
+    }
+    return NSClassFromString(className);
+}
+
+- (NSString *)propertyTypeFromAttributeString:(NSString *)attributeString
+{
+    NSString *type = [NSString string];
+    NSScanner *typeScanner = [NSScanner scannerWithString:attributeString];
+    [typeScanner scanUpToCharactersFromSet:[NSCharacterSet characterSetWithCharactersInString:@"@"] intoString:NULL];
+
+    if ([typeScanner isAtEnd]) {
+        return @"NULL";
+    }
+
+    [typeScanner scanCharactersFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\"@"] intoString:NULL];
+    [typeScanner scanUpToCharactersFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\""] intoString:&type];
+    return type;
 }
 
 @end
@@ -188,6 +222,9 @@
             [object vok_safeSetValue:inputObject forKey:aMap.coreDataKey];
         }
     }
+    if (self.importCompletionBlock) {
+        self.importCompletionBlock(inputDict, object);
+    }
 }
 
 - (NSDictionary *)dictionaryRepresentationOfManagedObject:(NSManagedObject *)object
@@ -201,11 +238,14 @@
             outputDict[aMap.inputKeyPath] = outputObject;
         }
     }
+    if (self.exportCompletionBlock) {
+        self.exportCompletionBlock(outputDict, object);
+    }
 
     return [outputDict copy];
 }
 
-NSString *const period = @".";
+static NSString *const period = @".";
 - (NSDictionary *)hierarchicalDictionaryRepresentationOfManagedObject:(NSManagedObject *)object
 {
     NSMutableDictionary *outputDict = [NSMutableDictionary new];
@@ -219,6 +259,9 @@ NSString *const period = @".";
         if (outputObject) {
             [outputDict setValue:outputObject forKeyPath:aMap.inputKeyPath];
         }
+    }
+    if (self.exportCompletionBlock) {
+        self.exportCompletionBlock(outputDict, object);
     }
 
     return [outputDict copy];
@@ -259,6 +302,9 @@ NSString *const period = @".";
             [object vok_safeSetValue:inputObject forKey:key];
         }
     }];
+    if (self.importCompletionBlock) {
+        self.importCompletionBlock(inputDict, object);
+    }
 }
 
 - (NSDictionary *)dictionaryRepresentationOfManagedObject:(NSManagedObject *)object
@@ -272,7 +318,10 @@ NSString *const period = @".";
             outputDict[key] = outputObject;
         }
     }];
-    
+    if (self.exportCompletionBlock) {
+        self.exportCompletionBlock(outputDict, object);
+    }
+
     return [outputDict copy];
 }
 
