@@ -41,6 +41,13 @@ typedef void(^VOKPostExportBlock)(NSMutableDictionary *outputDict, NSManagedObje
  */
 + (instancetype)defaultMapper;
 
+/**
+ *  This override of objectForKeyedSubscript allows you to get the network keypath for the given core data key.
+ *
+ *  @param key The core data key.
+ *
+ *  @return The network equivalent keypath as a string.
+ */
 - (id)objectForKeyedSubscript:(id)key;
 
 @end
