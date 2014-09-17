@@ -275,6 +275,9 @@
         case NSFetchedResultsChangeDelete:
             [_tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
             break;
+        default:
+            //Do nothing, shut up the compiler.
+            break;
     }
 }
 
