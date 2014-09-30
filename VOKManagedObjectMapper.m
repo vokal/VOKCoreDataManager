@@ -218,9 +218,7 @@
         inputObject = [self checkClass:inputObject managedObject:object key:aMap.coreDataKey];
         inputObject = [self checkNull:inputObject];
 
-        if (!self.ignoreNullValueOverwrites) {
-            [object vok_safeSetValue:inputObject forKey:aMap.coreDataKey];
-        } else if (inputObject) {
+        if (!self.ignoreNullValueOverwrites || inputObject) {
             [object vok_safeSetValue:inputObject forKey:aMap.coreDataKey];
         }
     }
