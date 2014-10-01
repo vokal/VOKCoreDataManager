@@ -243,8 +243,6 @@
 
 - (void)initFetchedResultsController
 {
-    [NSFetchedResultsController deleteCacheWithName:self.cacheName];
-    
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:[_managedObjectClass vok_entityName]
                                               inManagedObjectContext:_managedObjectContext];
