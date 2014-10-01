@@ -29,6 +29,8 @@
 @property (weak, nonatomic) NSPredicate *predicate;
 @property (weak, nonatomic) NSArray *sortDescriptors;
 
+@property (nonatomic) BOOL includesSubentities;
+
 //whether to deselect the selected cell of the table view
 //after sending the selected object to the delegate
 //defaults to YES
