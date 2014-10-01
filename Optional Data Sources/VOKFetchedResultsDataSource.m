@@ -40,6 +40,7 @@
         _tableView.dataSource = self;
         _batchSize = batchSize;
         _fetchLimit = fetchLimit;
+        _includesSubentities = YES;
         _delegate = delegate;
         
         _clearsTableViewCellSelection = YES;
@@ -127,6 +128,14 @@
 {
     if (_batchSize != batchSize) {
         _batchSize = batchSize;
+        [self initFetchedResultsController];
+    }
+}
+
+- (void)setIncludesSubentities:(BOOL)includesSubentities
+{
+    if (_includesSubentities != includesSubentities) {
+        _includesSubentities = includesSubentities;
         [self initFetchedResultsController];
     }
 }
@@ -234,6 +243,8 @@
 
 - (void)initFetchedResultsController
 {
+    [NSFetchedResultsController deleteCacheWithName:self.cacheName];
+    
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:[_managedObjectClass vok_entityName]
                                               inManagedObjectContext:_managedObjectContext];
@@ -246,6 +257,8 @@
     [fetchRequest setSortDescriptors:_sortDescriptors];
 
     [fetchRequest setPredicate:_predicate];
+    
+    [fetchRequest setIncludesSubentities:_includesSubentities];
 
     NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                                                                                 managedObjectContext:_managedObjectContext
