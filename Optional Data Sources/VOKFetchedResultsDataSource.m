@@ -202,6 +202,13 @@
     }
 }
 
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([_delegate respondsToSelector:@selector(fetchResultsDataSourceDeselectedObject:)]) {
+        [_delegate fetchResultsDataSourceDeselectedObject:[_fetchedResultsController objectAtIndexPath:indexPath]];
+    }
+}
+
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
