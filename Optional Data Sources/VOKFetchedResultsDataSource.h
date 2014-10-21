@@ -8,6 +8,7 @@
 @protocol VOKFetchedResultsDataSourceDelegate <NSObject>
 @optional
 - (void)fetchResultsDataSourceSelectedObject:(NSManagedObject *)object;
+- (void)fetchResultsDataSourceDeselectedObject:(NSManagedObject *)object;
 - (void)fetchResultsDataSourceHasResults:(BOOL)hasResults;
 
 @end
