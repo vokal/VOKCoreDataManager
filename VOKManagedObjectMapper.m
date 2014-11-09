@@ -158,14 +158,26 @@
 {
     Class expectedClass = [self expectedClassForObject:object andKey:key];
     if (![inputObject isKindOfClass:expectedClass]) {
-        VOK_CDLog(@"Wrong kind of class for %@\nProperty: %@ \nExpected: %@\nReceived: %@",
-              object,
-              key,
-              NSStringFromClass(expectedClass),
-              NSStringFromClass([inputObject class]));
+        if (!(self.ignoreOptionalNullValues
+              && (!inputObject || [[NSNull null] isEqual:inputObject])
+              && [self key:key isOptionalForObject:object])) {
+            //if this is not a null value being set for an optional property that we want to know about
+            //emit a warning message
+            VOK_CDLog(@"Wrong kind of class for %@\nProperty: %@ \nExpected: %@\nReceived: %@",
+                      object,
+                      key,
+                      NSStringFromClass(expectedClass),
+                      NSStringFromClass([inputObject class]));
+        }
         return nil;
     }
     return inputObject;
+}
+
+- (BOOL)key:(NSString *)key isOptionalForObject:(NSManagedObject *)object
+{
+    NSPropertyDescription *propertyDescription = object.entity.propertiesByName[key];
+    return propertyDescription.optional;
 }
 
 - (Class)expectedClassForObject:(NSManagedObject *)object andKey:(id)key
