@@ -12,4 +12,5 @@ Pod::Spec.new do |s|
   s.framework    = "CoreData"
   s.requires_arc = true
   s.dependency 'iCarousel', '~> 1.7.3'
+  s.deprecated_in_favor_of = 'Vokoder'
 end
